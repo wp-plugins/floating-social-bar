@@ -32,7 +32,7 @@ Floating Social Bar is extremely easy to use. There is a simple options interfac
 
 "What is the best social media plugin?" is one of the most common questions that we get asked at [WPBeginner](http://www.wpbeginner.com "WPBeginner"). We found it hard to recommend social plugins for WordPress because none of them met our standards. We only recommend what we use or would use. After numerous requests from our users, we decided to release our internal social plugin for our audience and the greater WordPress community.
 
-This plugin is being used on WPBeginner, [List25](http://list.com "List25"), [SteadyStrength](http://www.steadystrength.com "SteadyStrength"), and numerous other properties of ours.
+This plugin is being used on WPBeginner, [List25](http://list25.com "List25"), [SteadyStrength](http://www.steadystrength.com "SteadyStrength"), and numerous other properties of ours.
 
 = Support =
 
