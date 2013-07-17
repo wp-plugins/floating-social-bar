@@ -75,6 +75,12 @@ Go to Settings > Floating Social Bar for options.
 
 == Changelog ==
 
+= 1.0.2 =
+* Fixed bug where items wouldn't work in MultiSite.
+* Fixed bug that caused items to output on both blog and single pages.
+* Improved mobile support by ensuring the bar doesn't float on mobile devices.
+* Removed the default labeling for the bar.
+
 = 1.0.1 =
 * Fixed bug where scrolling wouldn't work if stopper div was not found.
 * Fixed bug where stats updater wouldn't fire if template tag was used outside of a singular view.

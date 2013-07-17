@@ -46,6 +46,7 @@
     	    },
     	    stop: function(e, ui){
         	    fsb_save_order(e, ui);
+        	    $('#tgm-plugin-settings .available-sharing ul').enableSelection();
 
         	    // If the enabled services holder is empty, show our helper text.
         	    if ( 0 == $('#tgm-plugin-settings .enabled-sharing ul li').length )
@@ -53,6 +54,9 @@
                 else
                     $('#tgm-plugin-settings .enabled-sharing .sharing-text').hide();
     	    },
+    	    start: function(e, ui){
+        	    $('#tgm-plugin-settings .available-sharing ul').disableSelection();
+    	    }
 	    });
 
 	    // If the enabled services holder is empty, show our helper text.
