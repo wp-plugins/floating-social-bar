@@ -519,7 +519,7 @@ class floating_social_bar {
                                     </div>
                                 </div>
                             </div>
-                            <table class="table table-striped table-bordered">
+                            <table class="table table-striped table-bordered clearfix clear">
                                 <thead>
                                     <tr>
                                         <td><?php _e( 'Setting', 'fsb' ); ?></td>

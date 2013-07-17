@@ -76,6 +76,9 @@ Go to Settings > Floating Social Bar for options.
 
 == Changelog ==
 
+= 1.0.2 =
+* Fixed bug where settings table displayed incorrectly in Firefox.
+
 = 1.0.1 =
 * Fixed bug where scrolling wouldn't work if comment area was not detected.
 * Force stats update if using the template tag outside of a singular view.
