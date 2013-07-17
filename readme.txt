@@ -4,7 +4,6 @@ Donate link: http://www.wpbeginner.com/wpbeginner-needs-your-help/
 Tags: social, social media, floating share bar, share bar, facebook, twitter, google+, pinterest, linkedin, social sharing, tweet, google, google+1, like, share, plus one, socialite, tweet button, twitter button, facebook like, pin it, pinit button, linkedin button, linkedin share, sharing, social media buttons, social media widgets, social widget, wpbeginner, sharethis, sharebar, addthis, social bar
 Requires at least: 3.4.1
 Tested up to: 3.5.2
-Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,12 +75,10 @@ Go to Settings > Floating Social Bar for options.
 
 == Changelog ==
 
-= 1.0.2 =
-* Fixed bug where settings table displayed incorrectly in Firefox.
-
 = 1.0.1 =
-* Fixed bug where scrolling wouldn't work if comment area was not detected.
-* Force stats update if using the template tag outside of a singular view.
+* Fixed bug where scrolling wouldn't work if stopper div was not found.
+* Fixed bug where stats updater wouldn't fire if template tag was used outside of a singular view.
+* Fixed bug in Firefox where settings display was messed up.
 
 = 1.0.0 =
 * Initial release of the plugin.
