@@ -63,7 +63,10 @@ Go to Settings > Floating Social Bar for options.
 
 == Screenshots ==
 
-
+1. Main Floating Social Bar plugin settings page.
+2. Drag-and-drop enabling of social services.
+3. Option to hide bar on individual pages.
+4. Final output of the bar on your site.
 
 
 == Frequently Asked Questions ==
