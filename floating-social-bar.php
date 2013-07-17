@@ -61,6 +61,9 @@ if ( ! function_exists( 'floating_social_bar' ) ) {
 		foreach ( $args as $k => $v )
 			$output_args .= $k . '=' . $v . ' ';
 
+        // Force our stat updater to fire if needed.
+        $output_args .= 'update="true" ';
+
         // Return or echo the content via shortcode.
 		if ( $return )
 			return do_shortcode( '[fsb-social-bar ' . trim( $output_args ) . ']' );

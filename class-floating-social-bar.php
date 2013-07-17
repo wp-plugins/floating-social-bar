@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.0';
+    protected $version = '1.0.1';
 
     /**
      * The name of the plugin.
@@ -596,14 +596,15 @@ class floating_social_bar {
      * @since 1.0.0
      *
      * @global object $post The current post object.
+     * @param bool $manual Whether or not to fire this manually.
      * @return null Return early if certain criteria are not met.
      */
-    public function prepare_stats() {
+    public function prepare_stats( $manual = false ) {
 
         global $post;
 
         // If we are in the admin, not on a single post, the global $post is not set or the post status is not published, return early.
-        if ( is_admin() || ! is_singular() || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
+        if ( is_admin() || ! is_singular() && ! $manual || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
             return;
 
         // Also return early if the post type is not in our settings array or if the meta value is checked to off.
@@ -761,6 +762,10 @@ class floating_social_bar {
 
         // If we have attributes, output in the order that they are placed in the attributes.
         if ( $has_atts ) {
+            // If our stat updater has been set to true, update the stats.
+            if ( isset( $atts['update'] ) && $atts['update'] )
+                $this->prepare_stats( true );
+
             // Loop through the attributes and output the proper code.
             foreach ( (array) $atts as $service => $bool ) {
                 // Pass over any items set to false.

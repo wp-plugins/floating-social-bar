@@ -27,7 +27,6 @@
 	$(function(){
 	    // Load Socialite when hovering over the social bar.
 	    $('#fsb-social-bar').one('mouseenter', function(e){
-	        console.log(e);
 		    Socialite.load($(this));
 	    });
 
@@ -37,10 +36,17 @@
 	    // Attach to the scroll event to determine when to load items.
         $(window).scroll(function(){
             var y    = $(this).scrollTop(),
-                maxY = $('#respond').offset().top;
+                maxY = $('#respond, #disqus_thread, #livefyre, .fb-comments, #comment-form, .idc-new, #comment-respond'); // Attempt to target as many comment systems as possible.
+
+            // If for some reason one of our divs does not exist, don't do anything.
+            if ( $(maxY).eq(0).length == 0 )
+                return;
+
+            // Get the offset of our respond helper.
+            var offset = $(maxY).eq(0).offset().top;
 
             // If we are below the bar but above comments, set a fixed position.
-            if ( y >= fsb_top && y < maxY )
+            if ( y >= fsb_top && y < offset )
               $('#fsb-social-bar').addClass('fsb-fixed').css('width', $('#fsb-social-bar').parent().width());
             else
               $('#fsb-social-bar').removeClass('fsb-fixed').css('width', '100%');
