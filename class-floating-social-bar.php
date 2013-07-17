@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.1';
+    protected $version = '1.0.2';
 
     /**
      * The name of the plugin.
@@ -105,7 +105,7 @@ class floating_social_bar {
     private function __construct() {
 
         // Go ahead and set the option property.
-        $this->option = get_option( 'fsb_global_option' );
+        $this->option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
 
         // Load plugin text domain.
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -158,9 +158,13 @@ class floating_social_bar {
     public static function activate( $network_wide ) {
 
         // Ensure default options are set.
-        $option = get_option( 'fsb_global_option' );
-        if ( ! $option )
-            update_option( 'fsb_global_option', floating_social_bar::default_options() );
+        $option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
+        if ( ! $option ) {
+            if ( is_multisite() )
+                update_site_option( 'fsb_global_option', floating_social_bar::default_options() );
+            else
+                update_option( 'fsb_global_option', floating_social_bar::default_options() );
+        }
 
     }
 
@@ -187,7 +191,10 @@ class floating_social_bar {
     public static function uninstall( $network_wide ) {
 
         // Remove any plugin option leftovers when the plugin is removed.
-        delete_option( 'fsb_global_option' );
+        if ( is_multisite() )
+            delete_site_option( 'fsb_global_option' );
+        else
+            delete_option( 'fsb_global_option' );
 
     }
 
@@ -331,7 +338,7 @@ class floating_social_bar {
             return;
 
         // Grab the plugin options and data that has been submitted.
-        $option    = get_option( 'fsb_global_option' );
+        $option    = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
         $submitted = stripslashes_deep( $_REQUEST['_fsb_data'] );
 
         // Unset the submit value since we don't need it.
@@ -361,7 +368,10 @@ class floating_social_bar {
             $submitted['transient'] = is_int( $submitted['transient'] ) ? $submitted['transient'] : 1800;
 
         // Finally, update the option.
-        update_option( 'fsb_global_option', array_merge( $option, $submitted ) );
+        if ( is_multisite() )
+            update_site_option( 'fsb_global_option', array_merge( $option, $submitted ) );
+        else
+            update_option( 'fsb_global_option', array_merge( $option, $submitted ) );
 
     }
 
@@ -426,7 +436,7 @@ class floating_social_bar {
     public function display_plugin_admin_page() {
 
         // Load the plugin options.
-        $this->option = get_option( 'fsb_global_option' );
+        $this->option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
 
         ?>
         <!-- Facebook Like Code -->
@@ -596,21 +606,32 @@ class floating_social_bar {
      * @since 1.0.0
      *
      * @global object $post The current post object.
-     * @param bool $manual Whether or not to fire this manually.
      * @return null Return early if certain criteria are not met.
      */
-    public function prepare_stats( $manual = false ) {
+    public function prepare_stats() {
 
         global $post;
 
         // If we are in the admin, not on a single post, the global $post is not set or the post status is not published, return early.
-        if ( is_admin() || ! is_singular() && ! $manual || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
+        if ( is_admin() || ! is_singular( $this->option['show_on'] ) || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
             return;
 
         // Also return early if the post type is not in our settings array or if the meta value is checked to off.
         $hide = get_post_meta( $post->ID, 'fsb_show_social', true );
         if ( ! in_array( $post->post_type, $this->option['show_on'] ) || $hide )
             return;
+
+        // Do the stats update.
+        $this->do_stats_update();
+
+    }
+
+    /**
+     * Updates the stats of the social services.
+     *
+     * @since 1.0.0
+     */
+    public function do_stats_update() {
 
         // If we have reached this point, set our output flag to true.
         $this->do_social_bar = true;
@@ -753,6 +774,7 @@ class floating_social_bar {
             #fsb-social-bar .fsb-pinterest { width: 88px; height: 25px; background-position: -484px -10px; line-height: 25px; vertical-align: middle; }
             #fsb-social-bar .fsb-pinterest .fsb-count { width: 30px; text-align: center; display: inline-block; margin: 0px 0 0 50px; color: #333; }
             #fsb-social-bar .fsb-pinterest .socialite-button { margin: 0 !important; }
+            @media (max-width: 768px) { #fsb-social-bar.fsb-fixed { position: relative !important; } }
         ';
         $output .= str_replace( array( "\n", "\t", "\r" ), '', $css ) . '</style>';
 
@@ -764,7 +786,7 @@ class floating_social_bar {
         if ( $has_atts ) {
             // If our stat updater has been set to true, update the stats.
             if ( isset( $atts['update'] ) && $atts['update'] )
-                $this->prepare_stats( true );
+                $this->do_stats_update();
 
             // Loop through the attributes and output the proper code.
             foreach ( (array) $atts as $service => $bool ) {
@@ -825,7 +847,7 @@ class floating_social_bar {
 
         // Prepare variables.
         $items  = stripslashes_deep( $_REQUEST['items'] );
-        $option = get_option( 'fsb_global_option' );
+        $option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
         $update = array();
 
         // Loop through options, and if the service is not in the array of items, set it to off (the order doesn't matter).
@@ -840,10 +862,13 @@ class floating_social_bar {
         }
 
         // Update our option.
-        update_option( 'fsb_global_option', array_merge( $option, $update ) );
+        if ( is_multisite() )
+            update_site_option( 'fsb_global_option', array_merge( $option, $update ) );
+        else
+            update_option( 'fsb_global_option', array_merge( $option, $update ) );
 
         // Send back a response and die.
-        echo json_encode( true );
+        echo json_encode( $update );
         die;
 
     }
@@ -880,7 +905,7 @@ class floating_social_bar {
                     'order' => 4
                 )
             ),
-            'label'     => __( 'Share', 'fsb' ),
+            'label'     => '',
             'show_on'   => array( 0 => 'post' ),
             'twitter'   => '',
             'transient' => 1800
