@@ -80,7 +80,7 @@ In the template tag, you can pass in an array of arguments to denote which socia
 
 For example, if you want to use the template tag to add in facebook and twitter services, you would do the following:
 
-```if ( function_exists( 'floating_social_bar' ) ) floating_social_bar( array( 'facebook' => true, 'twitter' => true ) );```
+`if ( function_exists( 'floating_social_bar' ) ) floating_social_bar( array( 'facebook' => true, 'twitter' => true ) );`
 
 **Shortcode:** `[fsb-social-bar]`
 
