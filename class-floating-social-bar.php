@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.2';
+    protected $version = '1.0.3';
 
     /**
      * The name of the plugin.
@@ -630,8 +630,12 @@ class floating_social_bar {
      * Updates the stats of the social services.
      *
      * @since 1.0.0
+     *
+     * @global object $post The current post object.
      */
     public function do_stats_update() {
+
+        global $post;
 
         // If we have reached this point, set our output flag to true.
         $this->do_social_bar = true;
@@ -709,16 +713,6 @@ class floating_social_bar {
      * @return string $fsb Concatenated output of the social bar
      */
     public function shortcode( $atts ) {
-
-        // Declare a static counter to ensure that this is only output once on a given page.
-        static $fsb_counter = 0;
-
-        // If the counter is equal to or greater than 1, return early.
-        if ( $fsb_counter >= 1 )
-            return;
-
-        // Increment the counter.
-        $fsb_counter++;
 
         // Prepare variables.
         global $post;
@@ -827,7 +821,7 @@ class floating_social_bar {
     public function fsb( $content ) {
 
         // If our flag is not set to true, we don't need to do anything.
-        if ( ! $this->do_social_bar )
+        if ( ! $this->do_social_bar || ! is_main_query() )
             return $content;
 
         // If we have reached this point, let's output the social bar and prepend it to the content.

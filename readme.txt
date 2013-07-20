@@ -21,11 +21,9 @@ Unlike other social media plugins, we only support major social media networks t
 
 Floating Social Bar only loads scripts when necessary. None of the social media scripts are loaded when the page is loaded. Instead we show a replica image with all the counts. We use the socialite script to only load social buttons when the user brings their mouse over the button. Doing this allows us to keep your site load just as fast as it was loading without any social plugins.
 
-
 = Easy to Use =
 
 Floating Social Bar is extremely easy to use. There is a simple options interface that allows you to drag-and-drop the social buttons that you want to show. You can also use the drag-drop interface to control the order of how social share buttons appear on your site.
-
 
 = Best Social Media Plugin =
 
@@ -41,7 +39,6 @@ We will do our best to provide support through the WordPress forums. However, pl
 
 This plugin is created by [Syed Balkhi](http://www.balkhis.com "Syed Balkhi") and [Thomas Griffin](http://thomasgriffinmedia.com/ "Thomas Griffin").
 
-
 = What's Next =
 
 If you like this plugin, then please leave us a good rating and review.
@@ -52,13 +49,11 @@ Check out [Soliloquy - The Best WordPress Slider](http://soliloquywp.com/ "Solil
 
 Visit WPBeginner to learn from our [WordPress Tutorials](http://www.wpbeginner.com/category/wp-tutorials/ "WordPress Tutorials") and find out about other [best WordPress plugins](http://www.wpbeginner.com/category/plugins/ "Best WordPress Plugins")
 
-
 == Installation ==
 
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
 
 Go to Settings > Floating Social Bar for options.
-
 
 == Screenshots ==
 
@@ -67,13 +62,42 @@ Go to Settings > Floating Social Bar for options.
 3. Option to hide bar on individual pages.
 4. Final output of the bar on your site.
 
-
 == Frequently Asked Questions ==
 
+= Is there a template tag for the plugin? =
 
+Yes, in fact there is both a template tag and a shortcode available for use.
 
+**Template Tag:** `floating_social_bar( $args = array(), $return = false )`
+
+In the template tag, you can pass in an array of arguments to denote which social services you want displayed. The order in which the services are entered will be the order in which they are displayed. The following keys are available for use:
+
+* facebook
+* twitter
+* google
+* linkedin
+* pinterest
+
+For example, if you want to use the template tag to add in facebook and twitter services, you would do the following:
+
+```
+if ( function_exists( 'floating_social_bar' ) ) floating_social_bar( array( 'facebook' => true, 'twitter' => true ) );
+```
+
+**Shortcode:** `[fsb-social-bar]`
+
+The shortcode takes the same parameters as the template with the following syntax:
+
+`[fsb-social-bar facebook="true" twitter="true"]`
 
 == Changelog ==
+
+= 1.0.3 =
+* Fixed bug that sometimes prevented social bar from appearing.
+* Fixed bug where $post wasn't set correctly for updating stats.
+* Improved checks by making sure bar is only output in main loop.
+* Improved scrolling transition from fixed to hidden when approaching comment respond areas.
+* Removed unnecessary checks for multiple bar outputs (some people may want more than one with future updates).
 
 = 1.0.2 =
 * Fixed bug where items wouldn't work in MultiSite.

@@ -46,10 +46,12 @@
             var offset = $(maxY).eq(0).offset().top;
 
             // If we are below the bar but above comments, set a fixed position.
-            if ( y >= fsb_top && y < offset )
-              $('#fsb-social-bar').addClass('fsb-fixed').css('width', $('#fsb-social-bar').parent().width());
-            else
-              $('#fsb-social-bar').removeClass('fsb-fixed').css('width', '100%');
+            if ( y > fsb_top && y < offset )
+              $('#fsb-social-bar').addClass('fsb-fixed').css('width', $('#fsb-social-bar').parent().width()).fadeIn();
+            else if ( y >= offset )
+              $('#fsb-social-bar').removeClass('fsb-fixed').css("display","none");
+            else if ( y < fsb_top )
+              $('#fsb-social-bar').show().removeClass('fsb-fixed');
         });
 	});
 }(jQuery));
