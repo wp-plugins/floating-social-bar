@@ -26,20 +26,22 @@
 (function($){
 	$(function(){
 	    // Load Socialite when hovering over the social bar.
-	    $('#fsb-social-bar').one('mouseenter', function(e){
-		    Socialite.load($(this));
+	    $('.fsb-social-bar').one('mouseenter', function(e){
+	    	// Only load Socialite if the user has not defined a variable to prevent it.
+	        if ( typeof fsb_kill_socialite === 'undefined' )
+		    	Socialite.load($(this));
 	    });
 
 	    // Declare variables.
-	    var fsb_top = $('#fsb-social-bar').offset().top;
+	    var fsb_top = $('.fsb-social-bar').offset().top;
 
 	    // Attach to the scroll event to determine when to load items.
         $(window).scroll(function(){
             var y    = $(this).scrollTop(),
                 maxY = $('#respond, #disqus_thread, #livefyre, .fb-comments, #comment-form, .idc-new, #comment-respond'); // Attempt to target as many comment systems as possible.
 
-            // If for some reason one of our divs does not exist, don't do anything.
-            if ( $(maxY).eq(0).length == 0 )
+            // If for some reason one of our divs does not exist or we should not float, don't do anything.
+            if ( $(maxY).eq(0).length == 0 || $('.fsb-social-bar').hasClass('fsb-no-float') )
                 return;
 
             // Get the offset of our respond helper.
@@ -47,11 +49,23 @@
 
             // If we are below the bar but above comments, set a fixed position.
             if ( y > fsb_top && y < offset )
-              $('#fsb-social-bar').addClass('fsb-fixed').css('width', $('#fsb-social-bar').parent().width()).fadeIn();
+              $('.fsb-social-bar').addClass('fsb-fixed').css('width', $('.fsb-social-bar').parent().width()).fadeIn();
             else if ( y >= offset )
-              $('#fsb-social-bar').removeClass('fsb-fixed').css("display","none");
+              $('.fsb-social-bar').removeClass('fsb-fixed').css('display', 'none');
             else if ( y < fsb_top )
-              $('#fsb-social-bar').show().removeClass('fsb-fixed');
+              $('.fsb-social-bar').show().removeClass('fsb-fixed');
+        });
+
+        // Open up the social services in a popup window.
+        $('.fsb-facebook, .fsb-twitter, .fsb-google, .fsb-linkedin, .fsb-pinterest').on('click', function(e){
+        	e.preventDefault();
+        	switch ( $(this).data('service') ) {
+				case 'facebook'  : window.open( $(this).attr('href'), 'fsbfacebook', 'menubar=1,resizable=1,width=600,height=400' ); return;
+				case 'twitter' 	 : window.open( $(this).attr('href'), 'fsbtwitter', 'menubar=1,resizable=1,width=600,height=350' ); return;
+				case 'google' 	 : window.open( $(this).attr('href'), 'fsbgoogle', 'menubar=1,resizable=1,width=600,height=600' ); return;
+				case 'linkedin'  : window.open( $(this).attr('href'), 'fsblinkedin', 'menubar=1,resizable=1,width=580,height=450' ); return;
+				case 'pinterest' : window.open( $(this).attr('href'), 'fsbpinterest', 'menubar=1,resizable=1,width=760,height=360' ); return;
+        	}
         });
 	});
 }(jQuery));

@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.3';
+    protected $version = '1.0.4';
 
     /**
      * The name of the plugin.
@@ -105,7 +105,7 @@ class floating_social_bar {
     private function __construct() {
 
         // Go ahead and set the option property.
-        $this->option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
+        $this->option = get_option( 'fsb_global_option' );
 
         // Load plugin text domain.
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -157,14 +157,25 @@ class floating_social_bar {
      */
     public static function activate( $network_wide ) {
 
-        // Ensure default options are set.
-        $option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
-        if ( ! $option ) {
-            if ( is_multisite() )
-                update_site_option( 'fsb_global_option', floating_social_bar::default_options() );
-            else
-                update_option( 'fsb_global_option', floating_social_bar::default_options() );
-        }
+    	if ( is_multisite() ) :
+	    	global $wpdb;
+	      	$site_list = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->blogs ORDER BY blog_id" ) );
+			foreach ( (array) $site_list as $site ) :
+				switch_to_blog( $site->blog_id );
+
+				// Ensure default options are set.
+		        $option = get_option( 'fsb_global_option' );
+		        if ( ! $option )
+		            update_option( 'fsb_global_option', floating_social_bar::default_options() );
+
+				restore_current_blog();
+			endforeach;
+		else :
+	        // Ensure default options are set.
+	        $option = get_option( 'fsb_global_option' );
+	        if ( ! $option )
+	            update_option( 'fsb_global_option', floating_social_bar::default_options() );
+	    endif;
 
     }
 
@@ -190,11 +201,17 @@ class floating_social_bar {
      */
     public static function uninstall( $network_wide ) {
 
-        // Remove any plugin option leftovers when the plugin is removed.
-        if ( is_multisite() )
-            delete_site_option( 'fsb_global_option' );
-        else
-            delete_option( 'fsb_global_option' );
+		if ( is_multisite() ) :
+			global $wpdb;
+	      	$site_list = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->blogs ORDER BY blog_id" ) );
+			foreach ( (array) $site_list as $site ) :
+				switch_to_blog( $site->blog_id );
+				delete_option( 'fsb_global_option' );
+				restore_current_blog();
+			endforeach;
+		else :
+	    	delete_option( 'fsb_global_option' );
+	    endif;
 
     }
 
@@ -338,16 +355,12 @@ class floating_social_bar {
             return;
 
         // Grab the plugin options and data that has been submitted.
-        $option    = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
+        $option    = get_option( 'fsb_global_option' );
         $submitted = stripslashes_deep( $_REQUEST['_fsb_data'] );
 
         // Unset the submit value since we don't need it.
         if ( isset( $submitted['submit'] ) )
             unset( $submitted['submit'] );
-
-        // Sanitize the option values.
-        if ( ! empty( $submitted['label'] ) )
-            $submitted['label'] = sanitize_text_field( $submitted['label'] );
 
         // Reset the show_on key.
         $option['show_on'] = array();
@@ -361,17 +374,16 @@ class floating_social_bar {
         if ( isset( $submitted['show_on'] ) )
             unset( $submitted['show_on'] );
 
-        if ( ! empty( $submitted['twitter'] ) )
-            $submitted['twitter'] = sanitize_text_field( $submitted['twitter'] );
-
-        if ( ! empty( $submitted['transient'] ) )
-            $submitted['transient'] = is_int( $submitted['transient'] ) ? $submitted['transient'] : 1800;
+        // Sanitize the option values.
+        $submitted['label'] 	= isset( $submitted['label'] ) ? sanitize_text_field( $submitted['label'] ) : '';
+        $submitted['twitter'] 	= isset( $submitted['twitter'] ) ? sanitize_text_field( $submitted['twitter'] ) : '';
+        $submitted['transient'] = isset( $submitted['transient'] ) ? intval( $submitted['transient'] ) : 1800;
+        $submitted['pinback']	= isset( $submitted['pinback'] ) ? esc_url( $submitted['pinback'] ) : '';
+		$submitted['static'] 	= isset( $submitted['static'] ) ? 1 : 0;
+		$submitted['position']	= isset( $submitted['position'] ) ? esc_attr( $submitted['position'] ) : 'above';
 
         // Finally, update the option.
-        if ( is_multisite() )
-            update_site_option( 'fsb_global_option', array_merge( $option, $submitted ) );
-        else
-            update_option( 'fsb_global_option', array_merge( $option, $submitted ) );
+        update_option( 'fsb_global_option', array_merge( $option, $submitted ) );
 
     }
 
@@ -436,7 +448,7 @@ class floating_social_bar {
     public function display_plugin_admin_page() {
 
         // Load the plugin options.
-        $this->option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
+        $this->option = get_option( 'fsb_global_option' ) ? get_option( 'fsb_global_option' ) : $this->default_options();
 
         ?>
         <!-- Facebook Like Code -->
@@ -565,6 +577,32 @@ class floating_social_bar {
                                         <td>
                                             <input id="fsb-transient" type="text" name="_fsb_data[transient]" value="<?php echo $this->option['transient']; ?>" />
                                             <small style="margin-bottom:0;" class="help-block text-muted"><?php _e( 'Defaults to every 30 minutes (1800 seconds). Value calculated in seconds.', 'fsb' ); ?></small>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><label for="fsb-pinback"><?php _e( 'Pinterest Image Fallback', 'fsb' ); ?></th>
+                                        <td>
+                                        	<?php $pinback = isset( $this->option['pinback'] ) ? $this->option['pinback'] : ''; ?>
+                                            <input id="fsb-pinback" type="text" name="_fsb_data[pinback]" value="<?php echo $pinback; ?>" />
+                                            <small style="margin-bottom:0;" class="help-block text-muted"><?php _e( 'Used if no featured image or images within the content are found.', 'fsb' ); ?></small>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><label for="fsb-static"><?php _e( 'Make Social Bar Static', 'fsb' ); ?></th>
+                                        <td>
+                                        	<?php $static = isset( $this->option['static'] ) ? $this->option['static'] : 0; ?>
+                                            <input id="fsb-static" type="checkbox" name="_fsb_data[static]" value="<?php echo $static; ?>" <?php checked( $static ); ?> />
+                                            <small style="display:inline;margin:0 0 0 3px;" class="help-block text-muted"><?php _e( 'If checked, the social bar will not float.', 'fsb' ); ?></small>
+                                        </td>
+                                    </tr>
+                                    <tr id="fsb-position-box" style="display:none;">
+                                        <th><label for="fsb-position"><?php _e( 'Position of Static Bar', 'fsb' ); ?></th>
+                                        <td>
+                                            <select id="fsb-position" name="_fsb_data[position]">
+                                            	<option value="above" <?php selected( 'above', ( isset( $this->option['position'] ) ? $this->option['position'] : 'above' ) ); ?>><?php _e( 'Above Content', 'fsb' ); ?></option>
+                                            	<option value="below" <?php selected( 'below', ( isset( $this->option['position'] ) ? $this->option['position'] : 'above' ) ); ?>><?php _e( 'Below Content', 'fsb' ); ?></option>
+                                            	<option value="both" <?php selected( 'both', ( isset( $this->option['position'] ) ? $this->option['position'] : 'above' ) ); ?>><?php _e( 'Above and Below Content', 'fsb' ); ?></option>
+                                            </select>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -731,11 +769,67 @@ class floating_social_bar {
         if ( ! empty( $atts ) )
             $has_atts = true;
 
-        // Enqueue the JS file for the social bar.
+        // If we have attributes, output in the order that they are placed in the attributes.
+        if ( $has_atts ) {
+            // If our stat updater has been set to true, update the stats.
+            if ( isset( $atts['update'] ) && $atts['update'] )
+                $this->do_stats_update();
+
+            // Loop through the attributes and output the proper code.
+            $services 	 = '';
+            $has_service = false;
+            foreach ( (array) $atts as $service => $bool ) {
+                // Pass over any items set to false.
+                if ( ! $bool ) continue;
+
+                // Set flag to true so that we know to output something on the screen.
+                $has_service = true;
+
+                // Retrieve the output.
+                $count  = get_post_meta( $post->ID, 'fsb_social_' . $service, true );
+                $services .= $this->get_service_output( $service, $count );
+            }
+
+            // Only proceed if we actually have services to output.
+            if ( $has_service )
+            	$output .= $this->do_social_bar_output( $services );
+        } else {
+            // Otherwise, we will just use the user-defined settings.
+            $services 	 = '';
+            $has_service = false;
+            foreach ( $this->option['services'] as $service => $data ) {
+                if ( ! $data['on'] ) continue;
+
+                // Set flag to true so that we know to output something on the screen.
+                $has_service = true;
+
+                // Retrieve the output.
+                $count  = get_post_meta( $post->ID, 'fsb_social_' . $service, true );
+                $services .= $this->get_service_output( $service, $count );
+            }
+
+            // Only proceed if we actually have services to output.
+            if ( $has_service )
+            	$output .= $this->do_social_bar_output( $services );
+        }
+
+        // Close up the outer social bar container.
+        $output .= '</div>';
+
+        // Return the output.
+        return $output;
+
+    }
+
+    public function do_social_bar_output( $services ) {
+
+	    // Enqueue the JS file for the social bar.
         wp_enqueue_script( $this->plugin_slug . '-fsb', plugins_url( 'js/fsb.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 
         // Build the outer social bar container.
-        $output .= '<div id="fsb-social-bar" class="fsb-social-bar">';
+        $static_class = isset( $this->option['static'] ) && $this->option['static'] ? ' fsb-no-float' : '';
+        $output  = '';
+        $output .= '<div id="fsb-social-bar" class="fsb-social-bar' . $static_class . '">';
 
         // Prepend the styles inline to the social bar for increased speed.
         $output .= '<style type="text/css">';
@@ -751,6 +845,7 @@ class floating_social_bar {
             #fsb-social-bar .fsb-share-pinterest { float: left; width: 115px; padding: 3px 0 2px; height: 25px;}
             #fsb-social-bar .socialite { display: block; position: relative; background: url(' . plugins_url( 'images/fsb-sprite.png', __FILE__ ) . ') no-repeat scroll 0 0; }
             #fsb-social-bar .socialite-loaded { background: none !important; }
+            #fsb-social-bar .fsb-service-title { display: none; }
             #fsb-social-bar a { color: #333; text-decoration: none; font-size: 12px; font-family: Arial, Helvetica, sans-serif; }
             #fsb-social-bar .fsb-twitter { width: 105px; height: 25px; background-position: -13px -10px; line-height: 25px; vertical-align: middle; }
             #fsb-social-bar .fsb-twitter .fsb-count { width: 30px; text-align: center; display: inline-block; margin: 0px 0 0 69px; color: #333; }
@@ -776,37 +871,8 @@ class floating_social_bar {
         if ( ! empty( $this->option['label'] ) )
             $output .= '<span class="fsb-title">' . esc_attr( $this->option['label'] ) . '</span>';
 
-        // If we have attributes, output in the order that they are placed in the attributes.
-        if ( $has_atts ) {
-            // If our stat updater has been set to true, update the stats.
-            if ( isset( $atts['update'] ) && $atts['update'] )
-                $this->do_stats_update();
-
-            // Loop through the attributes and output the proper code.
-            foreach ( (array) $atts as $service => $bool ) {
-                // Pass over any items set to false.
-                if ( ! $bool ) continue;
-
-                // Retrieve the output.
-                $count  = get_post_meta( $post->ID, 'fsb_social_' . $service, true );
-                $output .= $this->get_service_output( $service, $count );
-            }
-        } else {
-            // Otherwise, we will just use the user-defined settings.
-            foreach ( $this->option['services'] as $service => $data ) {
-                if ( ! $data['on'] ) continue;
-
-                // Retrieve the output.
-                $count  = get_post_meta( $post->ID, 'fsb_social_' . $service, true );
-                $output .= $this->get_service_output( $service, $count );
-            }
-        }
-
-        // Close up the outer social bar container.
-        $output .= '</div>';
-
-        // Return the output.
-        return $output;
+        // Add in the services.
+        return $output .= $services;
 
     }
 
@@ -827,8 +893,17 @@ class floating_social_bar {
         // If we have reached this point, let's output the social bar and prepend it to the content.
         $social_bar = do_shortcode( '[fsb-social-bar]' );
 
-        // Prepend our social bar to the content.
-        return $social_bar . $content;
+        // Determine how we add the content by user options.
+        if ( ! isset( $this->option['static'] ) || isset( $this->option['static'] ) && ! $this->option['static'] ) {
+        	return $social_bar . $content;
+        } else {
+	        if ( ! isset( $this->option['position'] ) || isset( $this->option['position'] ) && 'above' == $this->option['position'] )
+	        	return $social_bar . $content;
+	        else if ( isset( $this->option['position'] ) && 'below' == $this->option['position'] )
+	        	return $content . $social_bar;
+	        else
+	        	return $social_bar . $content . $social_bar;
+        }
 
     }
 
@@ -841,7 +916,7 @@ class floating_social_bar {
 
         // Prepare variables.
         $items  = stripslashes_deep( $_REQUEST['items'] );
-        $option = is_multisite() ? get_site_option( 'fsb_global_option' ) : get_option( 'fsb_global_option' );
+        $option = get_option( 'fsb_global_option' );
         $update = array();
 
         // Loop through options, and if the service is not in the array of items, set it to off (the order doesn't matter).
@@ -856,10 +931,7 @@ class floating_social_bar {
         }
 
         // Update our option.
-        if ( is_multisite() )
-            update_site_option( 'fsb_global_option', array_merge( $option, $update ) );
-        else
-            update_option( 'fsb_global_option', array_merge( $option, $update ) );
+        update_option( 'fsb_global_option', array_merge( $option, $update ) );
 
         // Send back a response and die.
         echo json_encode( $update );
@@ -902,7 +974,10 @@ class floating_social_bar {
             'label'     => '',
             'show_on'   => array( 0 => 'post' ),
             'twitter'   => '',
-            'transient' => 1800
+            'transient' => 1800,
+            'pinback'	=> '',
+            'static'	=> 0,
+            'position' 	=> 'above'
         );
 
     }
@@ -924,23 +999,43 @@ class floating_social_bar {
         $output = '<div class="fsb-share-' . $service . '">';
             switch ( $service ) {
                 case 'facebook' :
-                    $output .= '<a href="http://www.facebook.com/sharer.php?u=' . get_permalink( $post->ID ) . '" class="socialite facebook fsb-facebook" data-href="' . get_permalink( $post->ID ) . '" data-send="false" data-layout="button_count" data-width="60" data-show-faces="false" rel="nofollow" target="_blank"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="http://www.facebook.com/sharer.php?u=' . get_permalink( $post->ID ) . '" class="socialite facebook fsb-facebook" data-service="facebook" data-href="' . get_permalink( $post->ID ) . '" data-send="false" data-layout="button_count" data-width="60" data-show-faces="false" rel="nofollow" target="_blank"><span class="fsb-service-title">Facebook</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'twitter' :
-                    $output .= '<a href="https://twitter.com/intent/tweet?original_referer=' . urlencode( trailingslashit( get_home_url() ) ) . '&source=tweetbutton&text=' . get_the_title( $post->ID ) . '&url=' .  urlencode( get_permalink( $post->ID ) ) . '&via=' . $this->option['twitter'] . '" class="socialite twitter fsb-twitter" data-text="' .  get_the_title( $post->ID ) . '" data-url="' . get_permalink( $post->ID ) . '" data-count="horizontal" data-via="' . $this->option['twitter'] . '" rel="nofollow" target="_blank" title="' . ( $count ? $count . __( ' retweets so far', 'fsb' ) : __( 'Be the first one to tweet this article!' ) ) . '"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="https://twitter.com/intent/tweet?original_referer=' . urlencode( trailingslashit( get_home_url() ) ) . '&source=tweetbutton&text=' . get_the_title( $post->ID ) . '&url=' .  urlencode( get_permalink( $post->ID ) ) . '&via=' . $this->option['twitter'] . '" class="socialite twitter fsb-twitter" data-service="twitter" data-text="' .  get_the_title( $post->ID ) . '" data-url="' . get_permalink( $post->ID ) . '" data-count="horizontal" data-via="' . $this->option['twitter'] . '" rel="nofollow" target="_blank" title="' . ( $count ? $count . __( ' retweets so far', 'fsb' ) : __( 'Be the first one to tweet this article!' ) ) . '"><span class="fsb-service-title">Twitter</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'google' :
-                    $output .= '<a href="https://plus.google.com/share?url=' . get_permalink( $post->ID ) . '" class="socialite googleplus fsb-google" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="count"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="https://plus.google.com/share?url=' . get_permalink( $post->ID ) . '" class="socialite googleplus fsb-google" data-service="google" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="fsb-service-title">Google+</span><span class="count"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'linkedin' :
-                    $output .= '<a href="https://www.linkedin.com/cws/share?url=' . get_permalink( $post->ID ) . '" class="socialite linkedin fsb-linkedin" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="https://www.linkedin.com/cws/share?url=' . get_permalink( $post->ID ) . '" class="socialite linkedin fsb-linkedin" data-service="linkedin" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="fsb-service-title">LinkedIn</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'pinterest' :
-                    $output .= '<a href="http://pinterest.com/pin/create/button/?url=' . get_permalink( $post->ID ) . '&description=' . get_the_title( $post->ID ) . '" class="socialite pinit fsb-pinterest" target="_blank" rel="nofollow"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                	// Attempt to get either featured image, first image from post or a default fallback.
+                	$image = '';
+
+                	if ( has_post_thumbnail( $post->ID ) ) {
+	                	$data  = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
+	                	$image = $data[0];
+                	} else {
+	                	// Try to find an image in the content.
+	                	preg_match_all( '|<img.*?src=[\'"](.*?)[\'"].*?>|i', get_post_field( 'post_content', $post->ID ), $matches );
+
+	                	if ( isset( $matches ) && ! empty( $matches[1][0] ) ) {
+	                		$image = esc_url( $matches[1][0] );
+	                	} else {
+		                	if ( isset( $this->option['pinback'] ) && ! empty( $this->option['pinback'] ) )
+		                		$image = esc_url( $this->option['pinback'] );
+		                	else
+		                		$image = ''; // We have exhausted every option.
+	                	}
+                	}
+
+                    $output .= '<a href="http://pinterest.com/pin/create/button/?url=' . get_permalink( $post->ID ) . '&description=' . get_the_title( $post->ID ) . '&media=' . $image . '" class="socialite pinit fsb-pinterest" data-service="pinterest" target="_blank" rel="nofollow"><span class="fsb-service-title">Pinterest</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
             }
         $output .= '</div>';

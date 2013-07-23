@@ -65,6 +65,18 @@
         else
             $('#tgm-plugin-settings .enabled-sharing .sharing-text').hide();
 
+        // If the static option is checked, show the position option.
+        if ( $('#fsb-static').is(':checked') )
+        	$('#fsb-position-box').show();
+
+        // If the static option is checked, show/hide the position option.
+        $('#fsb-static').on('change', function(){
+	        if ( $(this).is(':checked') )
+	        	$('#fsb-position-box').fadeIn(300);
+	        else
+	        	$('#fsb-position-box').fadeOut(300);
+        });
+
 	    // Handle plugin settings updates.
 		$('#tgm-plugin-settings-form').on('submit', function(){
 	    	// Apply an overlay while processing the save on the server.

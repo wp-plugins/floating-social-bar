@@ -3,31 +3,39 @@ Contributors: smub, griffinjt
 Donate link: http://www.wpbeginner.com/wpbeginner-needs-your-help/
 Tags: social, social media, floating share bar, share bar, facebook, twitter, google+, pinterest, linkedin, social sharing, tweet, google, google+1, like, share, plus one, socialite, tweet button, twitter button, facebook like, pin it, pinit button, linkedin button, linkedin share, sharing, social media buttons, social media widgets, social widget, wpbeginner, sharethis, sharebar, addthis, social bar
 Requires at least: 3.4.1
-Tested up to: 3.5.2
+Tested up to: 3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Floating Social Bar is the best social media plugin for WordPress that adds a floating bar with share buttons to your content without slowing down your site.
+Floating Social Bar is the best social media plugin for WordPress that adds a floating social media bar to your content.
 
 == Description ==
 
 Social media share buttons are a must have for every site, but they can significantly impact your site's speed. At [WPBeginner](http://www.wpbeginner.com "WPBeginner"), we created the floating social bar to maximize our social media visibility without impacting our site speed.
 
-Floating social bar is a light-weight WordPress plugin that adds a floating bar with share buttons to your blog posts, pages, and other post types. The floating ability allows this eye-catching bar to get you maximum shares.
+Floating social bar is a light-weight WordPress plugin that adds a horizontal floating share bar to your blog posts, pages, and other post types. The floating ability allows this eye-catching social media bar to get you maximum shares.
 
 = Slim and Fast =
 
 Unlike other social media plugins, we only support major social media networks to keep our plugin slim. You can add share buttons for Twitter, Facebook, Google+, LinkedIn, and Pinterest.
 
-Floating Social Bar only loads scripts when necessary. None of the social media scripts are loaded when the page is loaded. Instead we show a replica image with all the counts. We use the socialite script to only load social buttons when the user brings their mouse over the button. Doing this allows us to keep your site load just as fast as it was loading without any social plugins.
+[Floating Social Bar](http://www.wpbeginner.com/floating-social-bar/ "Floating Social Bar") only loads scripts when necessary. None of the social media scripts are loaded when the page is loaded. Instead we show a replica image with all the counts. We use the socialite script to only load social buttons when the user brings their mouse over the button. Doing this allows us to keep your site as fast as it would load without any social plugins.
 
 = Easy to Use =
 
-Floating Social Bar is extremely easy to use. There is a simple options interface that allows you to drag-and-drop the social buttons that you want to show. You can also use the drag-drop interface to control the order of how social share buttons appear on your site.
+Floating Social Share Bar is extremely easy to use. There is a simple options interface that allows you to drag-and-drop the social buttons that you want to display. You can also use the drag-drop interface to control the order of how social share buttons appear on your site.
 
-= Best Social Media Plugin =
+For developers, we have a template tag available for custom use cases.
 
-"What is the best social media plugin?" is one of the most common questions that we get asked at [WPBeginner](http://www.wpbeginner.com "WPBeginner"). We found it hard to recommend social plugins for WordPress because none of them met our standards. We only recommend what we use or would use. After numerous requests from our users, we decided to release our internal social plugin for our audience and the greater WordPress community.
+We also have a metabox that allows you to disable the social media bar on specific posts or pages.
+
+= Best Social Media Plugin for WordPress =
+
+What is the best social media plugin for WordPress is one of the most common questions that we get asked at [WPBeginner](http://www.wpbeginner.com "WPBeginner"). We found it hard to recommend social plugins for WordPress because none of them met our standards. We only recommend what we use or would use.
+
+All social plugins are very heavy and significantly slow down your site. This plugin is by far the fastest social media plugin for WordPress that exists.
+
+We created this for our site over a year ago. After numerous requests from our users, we decided to release our internal social plugin for our audience and the greater WordPress community.
 
 This plugin is being used on WPBeginner, [List25](http://list25.com "List25"), [SteadyStrength](http://www.steadystrength.com "SteadyStrength"), and numerous other properties of ours.
 
@@ -51,9 +59,13 @@ Visit WPBeginner to learn from our [WordPress Tutorials](http://www.wpbeginner.c
 
 == Installation ==
 
-Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
+Extract the zip file and just drop the contents in the `wp-content/plugins/` directory of your WordPress installation and then activate the Plugin from Plugins page.
 
 Go to Settings > Floating Social Bar for options.
+
+More Details can be found on the [Floating Social Bar](http://www.wpbeginner.com/floating-social-bar/) page. You can also watch the video below for further instruction.
+
+[youtube http://www.youtube.com/watch?v=-K7aTPT56-Q]
 
 == Screenshots ==
 
@@ -88,7 +100,29 @@ The shortcode takes the same parameters as the template with the following synta
 
 `[fsb-social-bar facebook="true" twitter="true"]`
 
+= Why is the button count 0? =
+
+To maximize the performance, we get the social media count from each API and store it in a cache for 30 minutes. It only gets the count for the post when its loaded to reduce server load. For example, if no one visits your two year old post, then this plugin will not waste your precious server resources for that post. It only gets the count right when a user visits the post or page.
+
+We have tested and noticed that this small delay have no impact in the number of shares you get. However, there is an option in the plugin setting’s page that allows you to change the minimum interval if you want to get faster updates. But remember, it will increase server load.
+
+= Can I hide the social bar on specific posts or pages? =
+
+Yes you can hide the floating social bar on specific posts or pages. All you have to do is go on your post’s edit screen where you will find a metabox to hide the social share bar.
+
+= Why is the share bar not floating? =
+
+If you can see the share bar on your site, but it is not floating then 99% of the time it is a conflict with another plugin or your theme.
+
+
 == Changelog ==
+
+= 1.0.4 =
+* Fixed bug in MultiSite that caused options to be same across all sites in network.
+* Fixed bug with Pinterest if no images were found (can even set default image!).
+* Improved opening of social service windows to match official buttons.
+* Added ability to make the bar static and choose to display above or below the content (or both).
+* General bug fixes and improvements.
 
 = 1.0.3 =
 * Fixed bug that sometimes prevented social bar from appearing.
