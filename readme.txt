@@ -106,6 +106,10 @@ To maximize the performance, we get the social media count from each API and sto
 
 We have tested and noticed that this small delay have no impact in the number of shares you get. However, there is an option in the plugin setting’s page that allows you to change the minimum interval if you want to get faster updates. But remember, it will increase server load.
 
+= How can I make the social bar static when using the shortcode or template tag? =
+
+Easy. Just add `static="true"` to the shortcode or `'static' => true` to the template tag inside your array of arguments to make the social bar static (non-floating).
+
 = Can I hide the social bar on specific posts or pages? =
 
 Yes you can hide the floating social bar on specific posts or pages. All you have to do is go on your post’s edit screen where you will find a metabox to hide the social share bar.
@@ -116,6 +120,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 
 == Changelog ==
+
+= 1.0.5 =
+* Added ability to determine floating or static bar if done manually via shortcode or template tag (see FAQ for more info).
 
 = 1.0.4 =
 * Fixed bug in MultiSite that caused options to be same across all sites in network.

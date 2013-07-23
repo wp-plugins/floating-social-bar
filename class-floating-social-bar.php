@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.4';
+    protected $version = '1.0.5';
 
     /**
      * The name of the plugin.
@@ -792,7 +792,7 @@ class floating_social_bar {
 
             // Only proceed if we actually have services to output.
             if ( $has_service )
-            	$output .= $this->do_social_bar_output( $services );
+            	$output .= $this->do_social_bar_output( $services, $atts, true );
         } else {
             // Otherwise, we will just use the user-defined settings.
             $services 	 = '';
@@ -821,13 +821,16 @@ class floating_social_bar {
 
     }
 
-    public function do_social_bar_output( $services ) {
+    public function do_social_bar_output( $services, $atts = array(), $manual = false ) {
 
 	    // Enqueue the JS file for the social bar.
         wp_enqueue_script( $this->plugin_slug . '-fsb', plugins_url( 'js/fsb.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 
         // Build the outer social bar container.
-        $static_class = isset( $this->option['static'] ) && $this->option['static'] ? ' fsb-no-float' : '';
+        if ( $manual )
+        	$static_class = isset( $atts['static'] ) && $atts['static'] ? ' fsb-no-float' : '';
+        else
+        	$static_class = isset( $this->option['static'] ) && $this->option['static'] ? ' fsb-no-float' : '';
         $output  = '';
         $output .= '<div id="fsb-social-bar" class="fsb-social-bar' . $static_class . '">';
 
