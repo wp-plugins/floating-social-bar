@@ -125,6 +125,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.0.7 =
+* Fixed bug where content was not returned correctly.
+
 = 1.0.6 =
 * Fixed bug with Pinterest image and added a fallback image option.
 * Improved loading of share counts so that there is zero impact of page time.

@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.6';
+    protected $version = '1.0.7';
 
     /**
      * The name of the plugin.
@@ -928,12 +928,12 @@ class floating_social_bar {
 
     	// If we are not on a single post, the global $post is not set or the post status is not published, return early.
         if ( ! is_singular( $this->option['show_on'] ) || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
-            return;
+            return $content;
 
         // Also return early if the post type is not in our settings array or if the meta value is checked to off.
         $hide = get_post_meta( $post->ID, 'fsb_show_social', true );
         if ( ! in_array( $post->post_type, $this->option['show_on'] ) || $hide )
-            return;
+            return $content;
 
         // If we have reached this point, let's output the social bar and prepend it to the content.
         $social_bar = do_shortcode( '[fsb-social-bar]' );
