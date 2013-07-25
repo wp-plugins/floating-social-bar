@@ -110,6 +110,10 @@ We have tested and noticed that this small delay have no impact in the number of
 
 Easy. Just add `static="true"` to the shortcode or `'static' => true` to the template tag inside your array of arguments to make the social bar static (non-floating).
 
+= How can I disable Socialite when using the shortcode or template tag? =
+
+Again, easy. Just add `socialite="false"` to the shortcode or `'socialite' => false` to the template tag inside your array of arguments to prevent Socialite from running.
+
 = Can I hide the social bar on specific posts or pages? =
 
 Yes you can hide the floating social bar on specific posts or pages. All you have to do is go on your post’s edit screen where you will find a metabox to hide the social share bar.
@@ -120,6 +124,13 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 
 == Changelog ==
+
+= 1.0.6 =
+* Fixed bug with Pinterest image and added a fallback image option.
+* Improved loading of share counts so that there is zero impact of page time.
+* Improved display of share bar by hiding 0 counts by default.
+* Added ability to disable Socialite (see FAQ for disabling if using shortcode or template tag).
+* Added better checks to ensure the bar will always float if checked to do so.
 
 = 1.0.5 =
 * Added ability to determine floating or static bar if done manually via shortcode or template tag (see FAQ for more info).

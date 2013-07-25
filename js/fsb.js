@@ -25,11 +25,47 @@
  * ========================================================== */
 (function($){
 	$(function(){
+		// Run our ajax request to handle updating the stats counters if needed.
+		$(document.body).find('.fsb-social-bar').each(function(){
+			// Prepare the data variable.
+			var data = {
+				action: 'fsb_load_stats',
+				postid: $(this).data('post-id'),
+			},
+				services = {},
+				$this 	 = $(this);
+
+			// Add in all the services attached to the social bar.
+			$(this).find('div a').each(function(i, el){
+				services[i] = $(this).data('service');
+			});
+
+			// Add in the services to the data variable.
+			data.services = services;
+
+			// Make the AJAX request to update the stats.
+			$.post(fsb.ajax, data, function(res){
+				// If the response is empty, do nothing.
+				if ( res.length === 0 ) return;
+
+				// Loop through each response and update the visible counter and styling.
+				$.each(res, function(k, v){
+					// Pass over any items that still do not have any shares.
+					if ( 0 === parseInt(v) ) return;
+
+					// Update the visible share count and animate the class removal.
+					$this.find('[data-service="' + k + '"] .fsb-count').text(v).parent().parent().removeClass('fsb-hide-count');
+				});
+			}, 'json');
+		});
+
 	    // Load Socialite when hovering over the social bar.
 	    $('.fsb-social-bar').one('mouseenter', function(e){
 	    	// Only load Socialite if the user has not defined a variable to prevent it.
-	        if ( typeof fsb_kill_socialite === 'undefined' )
+	        if ( true === $(this).data('socialite') ) {
 		    	Socialite.load($(this));
+		    	$('.fsb-share-facebook, .fsb-share-google').removeClass('fsb-hide-count');
+		    }
 	    });
 
 	    // Declare variables.
@@ -38,14 +74,21 @@
 	    // Attach to the scroll event to determine when to load items.
         $(window).scroll(function(){
             var y    = $(this).scrollTop(),
-                maxY = $('#respond, #disqus_thread, #livefyre, .fb-comments, #comment-form, .idc-new, #comment-respond'); // Attempt to target as many comment systems as possible.
+                maxY = $('#respond, #disqus_thread, #livefyre, .fb-comments, #comment-form, .idc-new, #comment-respond, #comments, #comment, #footer, .site-footer'), // Attempt to target as many comment systems as possible.
+                nofo = false; // Flag if no div is found in the maxY var.
 
-            // If for some reason one of our divs does not exist or we should not float, don't do anything.
-            if ( $(maxY).eq(0).length == 0 || $('.fsb-social-bar').hasClass('fsb-no-float') )
+			// If for some reason one of our divs does not exist or it's height is zero, use the parent div as a scroll helper and set the nofo var to true.
+			if ( $(maxY).eq(0).length === 0 || 0 === $(maxY).height() ) {
+				maxY = $('.fsb-social-bar').parent();
+				nofo = true;
+			}
+
+            // If we should not float or the height of the maxY var is equal to zero, don't do anything.
+            if ( $('.fsb-social-bar').hasClass('fsb-no-float') || 0 === $(maxY).height() )
                 return;
 
             // Get the offset of our respond helper.
-            var offset = $(maxY).eq(0).offset().top;
+            var offset = ( true === nofo ) ? fsb_top + $(maxY).height() + 50 : $(maxY).eq(0).offset().top;
 
             // If we are below the bar but above comments, set a fixed position.
             if ( y > fsb_top && y < offset )

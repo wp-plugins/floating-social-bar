@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.5';
+    protected $version = '1.0.6';
 
     /**
      * The name of the plugin.
@@ -89,13 +89,13 @@ class floating_social_bar {
     protected $errors = array();
 
     /**
-     * Flag to determine updating and outputting of social bar.
+     * Flag to determine if the script has been localized.
      *
      * @since 1.0.0
      *
      * @var bool
      */
-    protected $do_social_bar = false;
+    protected $is_localized = false;
 
     /**
      * Initialize the plugin class object.
@@ -104,30 +104,17 @@ class floating_social_bar {
      */
     private function __construct() {
 
-        // Go ahead and set the option property.
-        $this->option = get_option( 'fsb_global_option' );
-
         // Load plugin text domain.
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
-        // Load the plugin settings link shortcut.
-        add_filter( 'plugin_action_links_' . plugin_basename( plugin_dir_path( __FILE__ ) . 'floating-social-bar.php' ), array( $this, 'settings_link' ) );
-
-        // Add the options page and menu item.
-        add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
-
-        // Prepare social stat counts.
-        add_action( 'wp', array( $this, 'prepare_stats' ) );
-
-        // Add the shortcode for outputting the social bar.
-        add_shortcode( 'fsb-social-bar', array( $this, 'shortcode' ) );
-
-        // Filter the content to add in our floating social bar.
-        add_filter( 'the_content', array( $this, 'fsb' ), apply_filters( 'fsb_social_bar_priority', 10 ) );
+        // Load the plugin.
+        add_action( 'init', array( $this, 'init' ) );
 
         // Handle ajax requests.
         add_action( 'wp_ajax_fsb_save_order', array( $this, 'save_order' ) );
         add_action( 'wp_ajax_nopriv_fsb_save_order', array( $this, 'save_order' ) );
+        add_action( 'wp_ajax_fsb_load_stats', array( $this, 'load_stats' ) );
+        add_action( 'wp_ajax_nopriv_fsb_load_stats', array( $this, 'load_stats' ) );
 
     }
 
@@ -227,6 +214,30 @@ class floating_social_bar {
 
         load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
         load_plugin_textdomain( $domain, false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+
+    }
+
+    /**
+     * Loads the plugin.
+     *
+     * @since 1.0.6
+     */
+    public function init() {
+
+	    // Go ahead and set the option property.
+        $this->option = get_option( 'fsb_global_option' );
+
+        // Load the plugin settings link shortcut.
+        add_filter( 'plugin_action_links_' . plugin_basename( plugin_dir_path( __FILE__ ) . 'floating-social-bar.php' ), array( $this, 'settings_link' ) );
+
+        // Add the options page and menu item.
+        add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
+
+        // Add the shortcode for outputting the social bar.
+        add_shortcode( 'fsb-social-bar', array( $this, 'shortcode' ) );
+
+        // Filter the content to add in our floating social bar.
+        add_action( 'pre_get_posts', array( $this, 'maybe_do_social_bar' ) );
 
     }
 
@@ -381,6 +392,7 @@ class floating_social_bar {
         $submitted['pinback']	= isset( $submitted['pinback'] ) ? esc_url( $submitted['pinback'] ) : '';
 		$submitted['static'] 	= isset( $submitted['static'] ) ? 1 : 0;
 		$submitted['position']	= isset( $submitted['position'] ) ? esc_attr( $submitted['position'] ) : 'above';
+		$submitted['socialite'] = isset( $submitted['socialite'] ) ? 1 : 0;
 
         // Finally, update the option.
         update_option( 'fsb_global_option', array_merge( $option, $submitted ) );
@@ -434,7 +446,7 @@ class floating_social_bar {
             'fsb',
             array(
                 'ajax' => admin_url( 'admin-ajax.php' ),
-                'save' => __( 'Saving your settings...', 'fsb' ),
+                'save' => __( 'Saving your settings...', 'fsb' )
             )
         );
 
@@ -605,6 +617,14 @@ class floating_social_bar {
                                             </select>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <th><label for="fsb-socialite"><?php _e( 'Disable Socialite', 'fsb' ); ?></th>
+                                        <td>
+                                        	<?php $socialite = isset( $this->option['socialite'] ) ? $this->option['socialite'] : 0; ?>
+                                            <input id="fsb-socialite" type="checkbox" name="_fsb_data[socialite]" value="<?php echo $socialite; ?>" <?php checked( $socialite ); ?> />
+                                            <small style="display:inline;margin:0 0 0 3px;" class="help-block text-muted"><?php _e( 'If checked, Socialite will not load when hovering over the social bar.', 'fsb' ); ?></small>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <p><strong><input type="submit" class="btn btn-success" name="_fsb_data[submit]" value="<?php esc_attr_e( 'Save Settings', 'fsb' ); ?>" /></strong></p>
@@ -639,70 +659,40 @@ class floating_social_bar {
     }
 
     /**
-     * Prepares the social counter stats for an individual post.
-     *
-     * @since 1.0.0
-     *
-     * @global object $post The current post object.
-     * @return null Return early if certain criteria are not met.
-     */
-    public function prepare_stats() {
-
-        global $post;
-
-        // If we are in the admin, not on a single post, the global $post is not set or the post status is not published, return early.
-        if ( is_admin() || ! is_singular( $this->option['show_on'] ) || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
-            return;
-
-        // Also return early if the post type is not in our settings array or if the meta value is checked to off.
-        $hide = get_post_meta( $post->ID, 'fsb_show_social', true );
-        if ( ! in_array( $post->post_type, $this->option['show_on'] ) || $hide )
-            return;
-
-        // Do the stats update.
-        $this->do_stats_update();
-
-    }
-
-    /**
      * Updates the stats of the social services.
      *
      * @since 1.0.0
      *
-     * @global object $post The current post object.
+     * @param array $services The services to update.
+     * @param int $post_id The current post ID to update.
+     * @return array $stats Array of updated stats from services.
      */
-    public function do_stats_update() {
+    public function do_stats_update( $services, $post_id ) {
 
-        global $post;
-
-        // If we have reached this point, set our output flag to true.
-        $this->do_social_bar = true;
+    	// Set our stats variable.
+    	$stats = array();
 
         // If our does not exist, update the stat counters and set the transient.
-        if ( false === get_transient( 'fsb_transient_' . $post->ID ) ) {
+        if ( false === get_transient( 'fsb_transient_' . $post_id ) ) {
             // Set variables and update active service counters.
-            $post_url = get_permalink( $post->ID );
-            $stats    = array();
+            $post_url = get_permalink( $post_id );
 
             // Loop through each service and do updating if necessary.
-            foreach ( (array) $this->option['services'] as $service => $data ) {
-                // If the chosen service is set to false, don't update anything.
-                if ( ! $data['on'] ) continue;
-
+            foreach ( (array) $services as $service ) {
                 // Update an individual service.
                 switch ( $service ) {
                     case 'facebook' :
                         $facebook_url      = 'https://api.facebook.com/method/fql.query?format=json&query=SELECT%20total_count%20FROM%20link_stat%20WHERE%20url=%22' . $post_url . '%22';
                         $facebook_stat     = json_decode( wp_remote_fopen( $facebook_url ) );
                         $stats['facebook'] = empty( $facebook_stat[0]->total_count ) ? '0' : (int) $facebook_stat[0]->total_count;
-                        update_post_meta( $post->ID, 'fsb_social_facebook', $stats['facebook'] );
+                        update_post_meta( $post_id, 'fsb_social_facebook', $stats['facebook'] );
                     break;
 
                     case 'twitter' :
                         $twitter_url      = 'http://urls.api.twitter.com/1/urls/count.json?url=' . $post_url;
                         $twitter_stat     = json_decode( wp_remote_fopen( $twitter_url ) );
                         $stats['twitter'] = empty( $twitter_stat->count ) ? '0' : (int) $twitter_stat->count;
-                        update_post_meta( $post->ID, 'fsb_social_twitter', $stats['twitter'] );
+                        update_post_meta( $post_id, 'fsb_social_twitter', $stats['twitter'] );
                     break;
 
                     case 'google' :
@@ -717,28 +707,31 @@ class floating_social_bar {
 
                         $json            = json_decode( $curl_results, true );
                         $stats['google'] = intval( $json[0]['result']['metadata']['globalCounts']['count'] );
-                        update_post_meta( $post->ID, 'fsb_social_google', $stats['google'] );
+                        update_post_meta( $post_id, 'fsb_social_google', $stats['google'] );
                     break;
 
                     case 'linkedin' :
                         $linkedin_url      = 'http://www.linkedin.com/countserv/count/share?url=' . $post_url .'&format=json';
                         $linkedin_stat     = json_decode( wp_remote_fopen( $linkedin_url ) );
                         $stats['linkedin'] = empty( $linkedin_stat->count ) ? '0' : (int) $linkedin_stat->count;
-                        update_post_meta( $post->ID, 'fsb_social_linkedin', $stats['linkedin'] );
+                        update_post_meta( $post_id, 'fsb_social_linkedin', $stats['linkedin'] );
                     break;
 
                     case 'pinterest' :
                         $pinterest_url  = 'http://api.pinterest.com/v1/urls/count.json?callback=receiveCount&url=' . $post_url;
                         $pinterest_stat = json_decode( preg_replace( '/^receiveCount\((.*)\)$/', "\\1", wp_remote_fopen( $pinterest_url ) ) );
                         $stats['pinterest'] = empty( $pinterest_stat->count ) ? '0' : (int) $pinterest_stat->count;
-                        update_post_meta( $post->ID, 'fsb_social_pinterest', $stats['pinterest'] );
+                        update_post_meta( $post_id, 'fsb_social_pinterest', $stats['pinterest'] );
                     break;
                 }
             }
 
             // Update our transient and set it to expire based on what the user has determined.
-            set_transient( 'fsb_transient_' . $post->ID, $stats, $this->option['transient'] );
+            set_transient( 'fsb_transient_' . $post_id, $stats, $this->option['transient'] );
         }
+
+        // Return the updated stats counter.
+        return $stats;
 
     }
 
@@ -771,16 +764,13 @@ class floating_social_bar {
 
         // If we have attributes, output in the order that they are placed in the attributes.
         if ( $has_atts ) {
-            // If our stat updater has been set to true, update the stats.
-            if ( isset( $atts['update'] ) && $atts['update'] )
-                $this->do_stats_update();
-
             // Loop through the attributes and output the proper code.
             $services 	 = '';
             $has_service = false;
+            $available = $this->get_services();
             foreach ( (array) $atts as $service => $bool ) {
-                // Pass over any items set to false.
-                if ( ! $bool ) continue;
+                // Pass over any items set to false or if they are not in the services list.
+                if ( ! $bool || ! in_array( $service, $available ) ) continue;
 
                 // Set flag to true so that we know to output something on the screen.
                 $has_service = true;
@@ -823,16 +813,35 @@ class floating_social_bar {
 
     public function do_social_bar_output( $services, $atts = array(), $manual = false ) {
 
+    	global $post;
+
 	    // Enqueue the JS file for the social bar.
         wp_enqueue_script( $this->plugin_slug . '-fsb', plugins_url( 'js/fsb.js', __FILE__ ), array( 'jquery' ), $this->version, true );
+
+        // Localize the JS script if it hasn't already been done.
+        if ( ! $this->is_localized ) {
+	        wp_localize_script( $this->plugin_slug . '-fsb', 'fsb',
+	        	array(
+	        		'ajax' => admin_url( 'admin-ajax.php' )
+				)
+			);
+			$this->is_localized = true;
+		}
 
         // Build the outer social bar container.
         if ( $manual )
         	$static_class = isset( $atts['static'] ) && $atts['static'] ? ' fsb-no-float' : '';
         else
         	$static_class = isset( $this->option['static'] ) && $this->option['static'] ? ' fsb-no-float' : '';
+
+        // Check if we should output socialite or not.
+        if ( $manual )
+        	$socialite = isset( $atts['socialite'] ) && ! $atts['socialite'] ? ' data-socialite="false"' : ' data-socialite="true"';
+        else
+        	$socialite = isset( $this->option['socialite'] ) && $this->option['socialite'] ? ' data-socialite="false"' : ' data-socialite="true"';
+
         $output  = '';
-        $output .= '<div id="fsb-social-bar" class="fsb-social-bar' . $static_class . '">';
+        $output .= '<div id="fsb-social-bar" class="fsb-social-bar' . $static_class . '" data-post-id="' . $post->ID . '"' . $socialite . '>';
 
         // Prepend the styles inline to the social bar for increased speed.
         $output .= '<style type="text/css">';
@@ -842,10 +851,15 @@ class floating_social_bar {
             #fsb-social-bar.fsb-fixed { position: fixed; top: -2px; z-index: 99999; }
             #fsb-social-bar .fsb-title { display: block; float: left; margin: 3px 20px 0 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-decoration: none; color: #333; }
             #fsb-social-bar .fsb-share-facebook { width: 120px; float: left; padding: 3px 0 2px; height: 25px; }
+            #fsb-social-bar .fsb-share-facebook.fsb-hide-count { width: 44px; overflow: hidden; margin-right: 30px; }
             #fsb-social-bar .fsb-share-twitter { float: left; width: 135px; padding: 3px 0 2px; height: 25px; }
+            #fsb-social-bar .fsb-share-twitter.fsb-hide-count { width: 61px; overflow: hidden; margin-right: 30px; }
             #fsb-social-bar .fsb-share-google { float: left; width: 105px; padding: 3px 0 2px; height: 25px; }
+            #fsb-social-bar .fsb-share-google.fsb-hide-count { width: 33px; overflow: hidden; margin-right: 30px; }
             #fsb-social-bar .fsb-share-linkedin { float: left; width: 135px; padding: 3px 0 2px; height: 25px; }
+            #fsb-social-bar .fsb-share-linkedin.fsb-hide-count { width: 61px; overflow: hidden; margin-right: 30px; }
             #fsb-social-bar .fsb-share-pinterest { float: left; width: 115px; padding: 3px 0 2px; height: 25px;}
+            #fsb-social-bar .fsb-share-pinterest.fsb-hide-count { width: 43px; overflow: hidden; margin-right: 30px; }
             #fsb-social-bar .socialite { display: block; position: relative; background: url(' . plugins_url( 'images/fsb-sprite.png', __FILE__ ) . ') no-repeat scroll 0 0; }
             #fsb-social-bar .socialite-loaded { background: none !important; }
             #fsb-social-bar .fsb-service-title { display: none; }
@@ -859,7 +873,7 @@ class floating_social_bar {
             #fsb-social-bar .fsb-facebook { width: 89px; height: 25px; background-position: -231px -10px; line-height: 25px; vertical-align: middle; }
             #fsb-social-bar .fsb-facebook .fsb-count { width: 30px; text-align: center; display: inline-block; margin: 0px 0 0 52px; color: #333; }
             #fsb-social-bar .fsb-facebook .socialite-button { margin: 0 !important;}
-            #fsb-social-bar .fsb-share-facebook .socialite-loaded .socialite-button{padding: 2px 0 0}
+            #fsb-social-bar .fsb-share-facebook .socialite-loaded .socialite-button {padding: 2px 0 0}
             #fsb-social-bar .fsb-linkedin { width: 105px; height: 25px; background-position: -347px -10px; line-height: 25px; vertical-align: middle; }
             #fsb-social-bar .fsb-linkedin .fsb-count { width: 30px; text-align: center; display: inline-block; margin: 0px 0 0 70px; color: #333; }
             #fsb-social-bar .fsb-linkedin .socialite-button { margin: 0 !important; }
@@ -880,6 +894,27 @@ class floating_social_bar {
     }
 
     /**
+     * Maybe adds the social bar if the query is the main query.
+     *
+     * @since 1.0.0
+     *
+     * @param object $query The current query to check if main query.
+     */
+    public function maybe_do_social_bar( $query ) {
+
+	    // If we are in the admin or not on the main query, do nothing.
+	    if ( is_admin() || ! $query->is_main_query() )
+	    	return;
+
+	    // Filter the content with our social bar.
+	    add_filter( 'the_content', array( $this, 'fsb' ), apply_filters( 'fsb_social_bar_priority', 10 ) );
+
+	    // Make sure nothing gets output in an excerpt.
+	    add_filter( 'get_the_excerpt', array( $this, 'excerpt_helper' ), 5 );
+
+    }
+
+    /**
      * Filters the content to output our floating social bar.
      *
      * @since 1.0.0
@@ -889,9 +924,16 @@ class floating_social_bar {
      */
     public function fsb( $content ) {
 
-        // If our flag is not set to true, we don't need to do anything.
-        if ( ! $this->do_social_bar || ! is_main_query() )
-            return $content;
+    	global $post;
+
+    	// If we are not on a single post, the global $post is not set or the post status is not published, return early.
+        if ( ! is_singular( $this->option['show_on'] ) || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
+            return;
+
+        // Also return early if the post type is not in our settings array or if the meta value is checked to off.
+        $hide = get_post_meta( $post->ID, 'fsb_show_social', true );
+        if ( ! in_array( $post->post_type, $this->option['show_on'] ) || $hide )
+            return;
 
         // If we have reached this point, let's output the social bar and prepend it to the content.
         $social_bar = do_shortcode( '[fsb-social-bar]' );
@@ -907,6 +949,21 @@ class floating_social_bar {
 	        else
 	        	return $social_bar . $content . $social_bar;
         }
+
+    }
+
+    /**
+     * Remove our social bar from any excerpt output.
+     *
+     * @since 1.0.0
+     *
+     * @param string $content The content to be filtered.
+     * @return string $content The content without our social bar.
+     */
+    public function excerpt_helper( $content ) {
+
+	    remove_filter( 'the_content', array( $this, 'fsb' ), 10 );
+	    return $content;
 
     }
 
@@ -939,6 +996,27 @@ class floating_social_bar {
         // Send back a response and die.
         echo json_encode( $update );
         die;
+
+    }
+
+    /**
+     * Loads the stats into place asynchronously so as to not affect page
+     * load times even remotely. :-)
+     *
+     * @since 1.0.0
+     */
+    public function load_stats() {
+
+		// Prepare variables.
+		$post_id  = stripslashes( absint( $_POST['postid'] ) );
+		$services = stripslashes_deep( $_POST['services'] );
+
+		// Do the stats update.
+		$stats = $this->do_stats_update( $services, $post_id );
+
+		// Return the stats counter back to the script and die.
+		echo json_encode( $stats );
+		die;
 
     }
 
@@ -980,7 +1058,8 @@ class floating_social_bar {
             'transient' => 1800,
             'pinback'	=> '',
             'static'	=> 0,
-            'position' 	=> 'above'
+            'position' 	=> 'above',
+            'socialite' => 0
         );
 
     }
@@ -999,7 +1078,8 @@ class floating_social_bar {
 
         global $post;
 
-        $output = '<div class="fsb-share-' . $service . '">';
+		$hide_count = 0 == $count ? ' fsb-hide-count' : '';
+        $output 	= '<div class="fsb-share-' . $service . $hide_count . '">';
             switch ( $service ) {
                 case 'facebook' :
                     $output .= '<a href="http://www.facebook.com/sharer.php?u=' . get_permalink( $post->ID ) . '" class="socialite facebook fsb-facebook" data-service="facebook" data-href="' . get_permalink( $post->ID ) . '" data-send="false" data-layout="button_count" data-width="60" data-show-faces="false" rel="nofollow" target="_blank"><span class="fsb-service-title">Facebook</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
@@ -1045,6 +1125,19 @@ class floating_social_bar {
 
         // Return the output.
         return $output;
+
+    }
+
+    /**
+     * Returns an array of available services to be used in the social bar.
+     *
+     * @since 1.0.6
+     *
+     * @return array Array of services to be used in the bar.
+     */
+    public function get_services() {
+
+	    return array( 'facebook', 'twitter', 'google', 'linkedin', 'pinterest' );
 
     }
 
