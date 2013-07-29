@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.7';
+    protected $version = '1.0.8';
 
     /**
      * The name of the plugin.
@@ -846,7 +846,7 @@ class floating_social_bar {
         // Prepend the styles inline to the social bar for increased speed.
         $output .= '<style type="text/css">';
         $css     = '
-            #fsb-social-bar { width: 100%; border-bottom: 1px solid #dbdbdb; border-top: 1px solid #dbdbdb; padding: 10px 0; margin: 0px 0 20px 0; float: left; background: #fff; position: relative; }
+            #fsb-social-bar { width: 100%; border-bottom: 1px solid #dbdbdb; border-top: 1px solid #dbdbdb; padding: 10px 0; margin: 0px 0 20px 0; float: left; background: #fff; position: relative; clear: both; }
             #fsb-social-bar a{border: 0px !important}
             #fsb-social-bar.fsb-fixed { position: fixed; top: -2px; z-index: 99999; }
             #fsb-social-bar .fsb-title { display: block; float: left; margin: 3px 20px 0 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-decoration: none; color: #333; }
@@ -906,11 +906,9 @@ class floating_social_bar {
 	    if ( is_admin() || ! $query->is_main_query() )
 	    	return;
 
-	    // Filter the content with our social bar.
+	    // Filter the content and excerpt with our social bar.
 	    add_filter( 'the_content', array( $this, 'fsb' ), apply_filters( 'fsb_social_bar_priority', 10 ) );
-
-	    // Make sure nothing gets output in an excerpt.
-	    add_filter( 'get_the_excerpt', array( $this, 'excerpt_helper' ), 5 );
+	    add_filter( 'the_excerpt', array( $this, 'fsb' ), apply_filters( 'fsb_social_bar_priority', 10 ) );
 
     }
 
@@ -924,7 +922,7 @@ class floating_social_bar {
      */
     public function fsb( $content ) {
 
-    	global $post;
+    	global $post, $wp_current_filter;
 
     	// If we are not on a single post, the global $post is not set or the post status is not published, return early.
         if ( ! is_singular( $this->option['show_on'] ) || empty( $post ) || 'publish' !== get_post_status( $post->ID ) )
@@ -934,6 +932,10 @@ class floating_social_bar {
         $hide = get_post_meta( $post->ID, 'fsb_show_social', true );
         if ( ! in_array( $post->post_type, $this->option['show_on'] ) || $hide )
             return $content;
+
+        // Don't do anything for excerpts.
+        if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ) )
+        	return $content;
 
         // If we have reached this point, let's output the social bar and prepend it to the content.
         $social_bar = do_shortcode( '[fsb-social-bar]' );

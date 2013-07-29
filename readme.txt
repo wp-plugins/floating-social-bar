@@ -7,7 +7,7 @@ Tested up to: 3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Floating Social Bar is the best social media plugin for WordPress that adds a floating social media bar to your content.
+Floating Social Bar is the best social media plugin for WordPress that adds a floating share bar to your content.
 
 == Description ==
 
@@ -69,6 +69,8 @@ More Details can be found on the [Floating Social Bar](http://www.wpbeginner.com
 
 == Screenshots ==
 
+We have a [Live Demo Setup here](http://www.balkhis.com/power-convenience-3-lessons-learn-retail-stores/).
+
 1. Main Floating Social Bar plugin settings page.
 2. Drag-and-drop enabling of social services.
 3. Option to hide bar on individual pages.
@@ -125,6 +127,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.0.8 =
+* Fixed bug where social bar would not display when using WordPress SEO social features.
+
 = 1.0.7 =
 * Fixed bug where content was not returned correctly.
 
@@ -165,3 +170,18 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 = 1.0.0 =
 * Initial release of the plugin.
+
+== Press ==
+
+* [HQTips](http://hqtips.com/web/wordpress/easy-way-to-add-floating-social-share-bar-in-wordpress/)
+* [Softstribe](http://softstribe.com/wordpress/how-to-add-floating-social-sharing-buttons-in-wordpress)
+* [WPBeginner](http://www.wpbeginner.com/plugins/how-to-add-a-floating-social-share-bar-in-wordpress/)
+* [Binkd](https://www.binkd.com/social-media/4-ways-to-maximize-your-contents-social-media-visibility/)
+* [Post Status](http://poststat.us/floating-social-bar/)
+* [Techating](http://techating.com/2013/07/how-to-add-a-floating-social-share-bar-in-wordpress/)
+* [Revthatup](http://www.revthatup.com/floating-social-bar-wordpress-plugin-by-wpbeginner-is-fast/)
+* [Balkhis](http://www.balkhis.com/what-is-the-best-social-media-plugin-for-wordpress/)
+* [TalkofWeb](http://www.talkofweb.com/how-to-add-floating-social-share-bar-in-wordpress-plugin/)
+* [Sabza](http://sabza.org/best-social-media-plugin-wordpress-floating-social-bar/)
+* [WPTavern](http://www.wptavern.com/plugin-review-floating-social-bar)
+* [BobWP](http://www.bobwp.com/wordpress-floating-social-bar-plugin/)
