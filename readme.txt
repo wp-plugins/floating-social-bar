@@ -127,6 +127,10 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed bug where extra span tag existed in Google share count.
+* Improved escaping of titles (by stripping HTML tags) for social media services.
+
 = 1.1.0 =
 * Fixed bug where options would be deleted if plugin was deactivated.
 * Fixed bug with outputting closing div tag if no services were enabled.
@@ -180,6 +184,7 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Press ==
 
+* [Thomas Griffin Media](http://thomasgriffinmedia.com/blog/2013/07/on-building-the-floating-social-bar-plugin/)
 * [HQTips](http://hqtips.com/web/wordpress/easy-way-to-add-floating-social-share-bar-in-wordpress/)
 * [Softstribe](http://softstribe.com/wordpress/how-to-add-floating-social-sharing-buttons-in-wordpress)
 * [WPBeginner](http://www.wpbeginner.com/plugins/how-to-add-a-floating-social-share-bar-in-wordpress/)
