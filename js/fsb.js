@@ -37,7 +37,7 @@
 
 			// Add in all the services attached to the social bar.
 			$(this).find('div a').each(function(i, el){
-				services[i] = $(this).data('service');
+				services[i] = $(this).data('fsb-service');
 			});
 
 			// Add in the services to the data variable.
@@ -102,7 +102,7 @@
         // Open up the social services in a popup window.
         $('.fsb-facebook, .fsb-twitter, .fsb-google, .fsb-linkedin, .fsb-pinterest').on('click', function(e){
         	e.preventDefault();
-        	switch ( $(this).data('service') ) {
+        	switch ( $(this).data('fsb-service') ) {
 				case 'facebook'  : window.open( $(this).attr('href'), 'fsbfacebook', 'menubar=1,resizable=1,width=600,height=400' ); return;
 				case 'twitter' 	 : window.open( $(this).attr('href'), 'fsbtwitter', 'menubar=1,resizable=1,width=600,height=350' ); return;
 				case 'google' 	 : window.open( $(this).attr('href'), 'fsbgoogle', 'menubar=1,resizable=1,width=600,height=600' ); return;

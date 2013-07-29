@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.8';
+    protected $version = '1.0.9';
 
     /**
      * The name of the plugin.
@@ -1084,19 +1084,19 @@ class floating_social_bar {
         $output 	= '<div class="fsb-share-' . $service . $hide_count . '">';
             switch ( $service ) {
                 case 'facebook' :
-                    $output .= '<a href="http://www.facebook.com/sharer.php?u=' . get_permalink( $post->ID ) . '" class="socialite facebook fsb-facebook" data-service="facebook" data-href="' . get_permalink( $post->ID ) . '" data-send="false" data-layout="button_count" data-width="60" data-show-faces="false" rel="nofollow" target="_blank"><span class="fsb-service-title">Facebook</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="http://www.facebook.com/sharer.php?u=' . get_permalink( $post->ID ) . '" class="socialite facebook fsb-facebook" data-fsb-service="facebook" data-href="' . get_permalink( $post->ID ) . '" data-send="false" data-layout="button_count" data-width="60" data-show-faces="false" rel="nofollow" target="_blank"><span class="fsb-service-title">Facebook</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'twitter' :
-                    $output .= '<a href="https://twitter.com/intent/tweet?original_referer=' . urlencode( trailingslashit( get_home_url() ) ) . '&source=tweetbutton&text=' . get_the_title( $post->ID ) . '&url=' .  urlencode( get_permalink( $post->ID ) ) . '&via=' . $this->option['twitter'] . '" class="socialite twitter fsb-twitter" data-service="twitter" data-text="' .  get_the_title( $post->ID ) . '" data-url="' . get_permalink( $post->ID ) . '" data-count="horizontal" data-via="' . $this->option['twitter'] . '" rel="nofollow" target="_blank" title="' . ( $count ? $count . __( ' retweets so far', 'fsb' ) : __( 'Be the first one to tweet this article!' ) ) . '"><span class="fsb-service-title">Twitter</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="https://twitter.com/share?original_referer=' . urlencode( trailingslashit( get_home_url() ) ) . '&source=tweetbutton&text=' . get_the_title( $post->ID ) . '&url=' .  urlencode( get_permalink( $post->ID ) ) . '&via=' . $this->option['twitter'] . '" class="socialite twitter fsb-twitter" data-fsb-service="twitter" rel="nofollow" target="_blank" title="' . ( $count ? $count . __( ' retweets so far', 'fsb' ) : __( 'Be the first one to tweet this article!' ) ) . '"><span class="fsb-service-title">Twitter</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'google' :
-                    $output .= '<a href="https://plus.google.com/share?url=' . get_permalink( $post->ID ) . '" class="socialite googleplus fsb-google" data-service="google" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="fsb-service-title">Google+</span><span class="count"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="https://plus.google.com/share?url=' . get_permalink( $post->ID ) . '" class="socialite googleplus fsb-google" data-fsb-service="google" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="fsb-service-title">Google+</span><span class="count"><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'linkedin' :
-                    $output .= '<a href="https://www.linkedin.com/cws/share?url=' . get_permalink( $post->ID ) . '" class="socialite linkedin fsb-linkedin" data-service="linkedin" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="fsb-service-title">LinkedIn</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="https://www.linkedin.com/cws/share?url=' . get_permalink( $post->ID ) . '" class="socialite linkedin fsb-linkedin" data-fsb-service="linkedin" data-size="medium" data-href="' . get_permalink( $post->ID ) . '" rel="nofollow" target="_blank"><span class="fsb-service-title">LinkedIn</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
 
                 case 'pinterest' :
@@ -1120,7 +1120,7 @@ class floating_social_bar {
 	                	}
                 	}
 
-                    $output .= '<a href="http://pinterest.com/pin/create/button/?url=' . get_permalink( $post->ID ) . '&description=' . get_the_title( $post->ID ) . '&media=' . $image . '" class="socialite pinit fsb-pinterest" data-service="pinterest" target="_blank" rel="nofollow"><span class="fsb-service-title">Pinterest</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
+                    $output .= '<a href="http://pinterest.com/pin/create/button/?url=' . get_permalink( $post->ID ) . '&description=' . get_the_title( $post->ID ) . '&media=' . $image . '" class="socialite pinit fsb-pinterest" data-fsb-service="pinterest" target="_blank" rel="nofollow"><span class="fsb-service-title">Pinterest</span><span class="fsb-count">' . ( $count ? $count : 0 ) . '</span></a>';
                 break;
             }
         $output .= '</div>';

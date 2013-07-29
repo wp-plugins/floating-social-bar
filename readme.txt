@@ -127,6 +127,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.0.9 =
+* Fixed bug where Twitter share would open duplicate window if Tweets widget was present on page.
+
 = 1.0.8 =
 * Fixed bug where social bar would not display when using WordPress SEO social features.
 
