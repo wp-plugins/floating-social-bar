@@ -127,6 +127,10 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.1.0 =
+* Fixed bug where options would be deleted if plugin was deactivated.
+* Fixed bug with outputting closing div tag if no services were enabled.
+
 = 1.0.9 =
 * Fixed bug where Twitter share would open duplicate window if Tweets widget was present on page.
 

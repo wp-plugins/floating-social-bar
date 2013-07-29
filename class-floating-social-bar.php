@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.0.9';
+    protected $version = '1.1.0';
 
     /**
      * The name of the plugin.
@@ -152,7 +152,7 @@ class floating_social_bar {
 
 				// Ensure default options are set.
 		        $option = get_option( 'fsb_global_option' );
-		        if ( ! $option )
+		        if ( ! $option || empty( $option ) )
 		            update_option( 'fsb_global_option', floating_social_bar::default_options() );
 
 				restore_current_blog();
@@ -160,7 +160,7 @@ class floating_social_bar {
 		else :
 	        // Ensure default options are set.
 	        $option = get_option( 'fsb_global_option' );
-	        if ( ! $option )
+	        if ( ! $option || empty( $option ) )
 	            update_option( 'fsb_global_option', floating_social_bar::default_options() );
 	    endif;
 
@@ -803,9 +803,6 @@ class floating_social_bar {
             	$output .= $this->do_social_bar_output( $services );
         }
 
-        // Close up the outer social bar container.
-        $output .= '</div>';
-
         // Return the output.
         return $output;
 
@@ -889,7 +886,13 @@ class floating_social_bar {
             $output .= '<span class="fsb-title">' . esc_attr( $this->option['label'] ) . '</span>';
 
         // Add in the services.
-        return $output .= $services;
+        $output .= $services;
+
+        // Close up the outer social bar container.
+        $output .= '</div>';
+
+        // Return the output.
+        return $output;
 
     }
 
