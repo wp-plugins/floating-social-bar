@@ -127,6 +127,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.1.2 =
+* Fixed bug with special characters not being encoded for sharing.
+
 = 1.1.1 =
 * Fixed bug where extra span tag existed in Google share count.
 * Improved escaping of titles (by stripping HTML tags) for social media services.
