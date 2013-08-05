@@ -127,6 +127,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.1.3 =
+* Fixed more bugs with URL encoding.
+
 = 1.1.2 =
 * Fixed bug with special characters not being encoded for sharing.
 
