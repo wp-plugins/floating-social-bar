@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.1.3';
+    protected $version = '1.1.4';
 
     /**
      * The name of the plugin.
@@ -844,7 +844,7 @@ class floating_social_bar {
         $output .= '<style type="text/css">';
         $css     = '
             #fsb-social-bar { width: 100%; border-bottom: 1px solid #dbdbdb; border-top: 1px solid #dbdbdb; padding: 10px 0; margin: 0px 0 20px 0; float: left; background: #fff; position: relative; clear: both; }
-            #fsb-social-bar a{border: 0px !important}
+            #fsb-social-bar a { border: 0px !important }
             #fsb-social-bar.fsb-fixed { position: fixed; top: -2px; z-index: 99999; }
             #fsb-social-bar .fsb-title { display: block; float: left; margin: 3px 20px 0 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-decoration: none; color: #333; }
             #fsb-social-bar .fsb-share-facebook { width: 120px; float: left; padding: 3px 0 2px; height: 25px; }
@@ -877,7 +877,9 @@ class floating_social_bar {
             #fsb-social-bar .fsb-pinterest { width: 88px; height: 25px; background-position: -484px -10px; line-height: 25px; vertical-align: middle; }
             #fsb-social-bar .fsb-pinterest .fsb-count { width: 30px; text-align: center; display: inline-block; margin: 0px 0 0 50px; color: #333; }
             #fsb-social-bar .fsb-pinterest .socialite-button { margin: 0 !important; }
-            @media (max-width: 768px) { #fsb-social-bar.fsb-fixed { position: relative !important; } }
+            #fsb-social-bar .fsb-clear { clear: both; }
+            #fsb-social-bar .fsb-clear:after { clear:both; content:'.'; display:block; height:0; line-height:0; overflow:auto; visibility:hidden; zoom:1; }
+            @media (max-width: 768px) { #fsb-social-bar.fsb-fixed { position: relative !important; top: auto !important; } }
         ';
         $output .= str_replace( array( "\n", "\t", "\r" ), '', $css ) . '</style>';
 
@@ -890,6 +892,9 @@ class floating_social_bar {
 
         // Close up the outer social bar container.
         $output .= '</div>';
+
+        // Append a float clear.
+        $output .= '<div class="fsb-clear"></div>';
 
         // Return the output.
         return $output;

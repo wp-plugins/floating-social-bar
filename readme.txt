@@ -127,6 +127,10 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.1.4 =
+* Fixed bug with subtle shift when viewing on mobile device.
+* Fixed clear bug in Firefox.
+
 = 1.1.3 =
 * Fixed more bugs with URL encoding.
 
