@@ -127,6 +127,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.1.5 =
+* Fixed clearfix bug in Firefox.
+
 = 1.1.4 =
 * Fixed bug with subtle shift when viewing on mobile device.
 * Fixed clearfix bug in Firefox.
@@ -207,3 +210,5 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 * [Sabza](http://sabza.org/best-social-media-plugin-wordpress-floating-social-bar/)
 * [WPTavern](http://www.wptavern.com/plugin-review-floating-social-bar)
 * [BobWP](http://www.bobwp.com/wordpress-floating-social-bar-plugin/)
+* [WP Kube](http://www.wpkube.com/horizontal-floating-social-bar-plugin-wordpress/)
+* [Freakify](http://freakify.com/floating-social-share-bar-best-wordpress-plugin/)

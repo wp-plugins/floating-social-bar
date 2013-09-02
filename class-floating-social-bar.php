@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.1.4';
+    protected $version = '1.1.5';
 
     /**
      * The name of the plugin.
@@ -877,8 +877,8 @@ class floating_social_bar {
             #fsb-social-bar .fsb-pinterest { width: 88px; height: 25px; background-position: -484px -10px; line-height: 25px; vertical-align: middle; }
             #fsb-social-bar .fsb-pinterest .fsb-count { width: 30px; text-align: center; display: inline-block; margin: 0px 0 0 50px; color: #333; }
             #fsb-social-bar .fsb-pinterest .socialite-button { margin: 0 !important; }
-            #fsb-social-bar .fsb-clear { clear: both; }
-            #fsb-social-bar .fsb-clear:after { clear:both; content:'.'; display:block; height:0; line-height:0; overflow:auto; visibility:hidden; zoom:1; }
+            .fsb-clear { clear: both; }
+            .fsb-clear:after { clear:both; content:'.'; display:block; height:0; line-height:0; overflow:auto; visibility:hidden; zoom:1; }
             @media (max-width: 768px) { #fsb-social-bar.fsb-fixed { position: relative !important; top: auto !important; } }
         ';
         $output .= str_replace( array( "\n", "\t", "\r" ), '', $css ) . '</style>';
