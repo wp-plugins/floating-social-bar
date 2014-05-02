@@ -11,7 +11,8 @@ Floating Social Bar is the best social media plugin for WordPress that adds a fl
 
 == Description ==
 
-Social media share buttons are a must have for every site, but they can significantly impact your site's speed. At [WPBeginner](http://www.wpbeginner.com "WPBeginner"), we created the floating social bar to maximize our social media visibility without impacting our site speed.
+Social media share buttons are a must have for every site, but they can significantly impact your site's speed. At <a href="http://www.wpbeginner.com" rel="friend" title=
+"WPBeginner">http://www.wpbeginner.com</a>, we created the floating social bar to maximize our social media visibility without impacting our site speed.
 
 Floating social bar is a light-weight WordPress plugin that adds a horizontal floating share bar to your blog posts, pages, and other post types. The floating ability allows this eye-catching social media bar to get you maximum shares.
 
@@ -19,7 +20,7 @@ Floating social bar is a light-weight WordPress plugin that adds a horizontal fl
 
 Unlike other social media plugins, we only support major social media networks to keep our plugin slim. You can add share buttons for Twitter, Facebook, Google+, LinkedIn, and Pinterest.
 
-[Floating Social Bar](http://www.wpbeginner.com/floating-social-bar/ "Floating Social Bar") only loads scripts when necessary. None of the social media scripts are loaded when the page is loaded. Instead we show a replica image with all the counts. We use the socialite script to only load social buttons when the user brings their mouse over the button. Doing this allows us to keep your site as fast as it would load without any social plugins.
+<a href="http://www.wpbeginner.com/floating-social-bar/" rel="friend" title="Floating Social Bar">http://www.wpbeginner.com/floating-social-bar/</a> only loads scripts when necessary. None of the social media scripts are loaded when the page is loaded. Instead we show a replica image with all the counts. We use the socialite script to only load social buttons when the user brings their mouse over the button. Doing this allows us to keep your site as fast as it would load without any social plugins.
 
 = Easy to Use =
 
@@ -31,21 +32,22 @@ We also have a metabox that allows you to disable the social media bar on specif
 
 = Best Social Media Plugin for WordPress =
 
-What is the best social media plugin for WordPress is one of the most common questions that we get asked at [WPBeginner](http://www.wpbeginner.com "WPBeginner"). We found it hard to recommend social plugins for WordPress because none of them met our standards. We only recommend what we use or would use.
+What is the best social media plugin for WordPress is one of the most common questions that we get asked at <a href="http://www.wpbeginner.com" rel="friend" title=
+"WPBeginner">http://www.wpbeginner.com</a>. We found it hard to recommend social plugins for WordPress because none of them met our standards. We only recommend what we use or would use.
 
 All social plugins are very heavy and significantly slow down your site. This plugin is by far the fastest social media plugin for WordPress that exists.
 
 We created this for our site over a year ago. After numerous requests from our users, we decided to release our internal social plugin for our audience and the greater WordPress community.
 
-This plugin is being used on WPBeginner, [List25](http://list25.com "List25"), [SteadyStrength](http://www.steadystrength.com "SteadyStrength"), and numerous other properties of ours.
+This plugin is being used on WPBeginner, <a href="http://list25.com" rel="friend" title="List25">List25</a>, <a href="http://www.steadystrength.com" rel="friend" title="SteadyStrength">SteadyStrength</a>, and numerous other properties of ours.
 
 = Support =
 
-We will do our best to provide support through the WordPress forums. However, please understand that this is a free plugin, so support will be limited. Please read this article on [how to properly ask for WordPress support and get it](http://www.wpbeginner.com/beginners-guide/how-to-properly-ask-for-wordpress-support-and-get-it/ "how to properly ask for WordPress support and get it").
+We will do our best to provide support through the WordPress forums. However, please understand that this is a free plugin, so support will be limited. Please read this article on <a href="http://www.wpbeginner.com/beginners-guide/how-to-properly-ask-for-wordpress-support-and-get-it/" rel="friend" title="how to properly ask for WordPress support and get it">how to properly ask for WordPress support and get it</a>.
 
 = Credits =
 
-This plugin is created by [Syed Balkhi](http://www.balkhis.com "Syed Balkhi") and <a href="http://thomasgriffinmedia.com/" rel="friend" title="Thomas Griffin">Thomas Griffin</a>.
+This plugin is created by <a href="http://www.balkhis.com" rel="friend" title="Syed Balkhi">Syed Balkhi</a> and <a href="http://thomasgriffinmedia.com/" rel="friend" title="Thomas Griffin">Thomas Griffin</a>.
 
 = What's Next =
 
@@ -63,7 +65,7 @@ Extract the zip file and just drop the contents in the `wp-content/plugins/` dir
 
 Go to Settings > Floating Social Bar for options.
 
-More Details can be found on the [Floating Social Bar](http://www.wpbeginner.com/floating-social-bar/) page. You can also watch the video below for further instruction.
+More Details can be found on the <a href="http://www.wpbeginner.com/floating-social-bar/" rel="friend" title="Floating Social Bar">http://www.wpbeginner.com/floating-social-bar/</a> page. You can also watch the video below for further instruction.
 
 [youtube http://www.youtube.com/watch?v=-K7aTPT56-Q]
 
