@@ -45,7 +45,7 @@ We will do our best to provide support through the WordPress forums. However, pl
 
 = Credits =
 
-This plugin is created by [Syed Balkhi](http://www.balkhis.com "Syed Balkhi") and [Thomas Griffin](http://thomasgriffinmedia.com/ "Thomas Griffin").
+This plugin is created by [Syed Balkhi](http://www.balkhis.com "Syed Balkhi") and <a href="http://thomasgriffinmedia.com/" rel="friend" title="Thomas Griffin">Thomas Griffin</a>.
 
 = What's Next =
 
@@ -53,7 +53,7 @@ If you like this plugin, then please leave us a good rating and review.
 
 Consider following us on [Twitter](http://twitter.com/wpbeginner "Twitter"), [Facebook](http://facebook.com/wpbeginner "Facebook"), and [Google+](https://plus.google.com/101634180904808003404/ "Google+")
 
-Check out [Soliloquy - The Best WordPress Slider](http://soliloquywp.com/ "Soliloquy")
+Check out <a href="http://soliloquywp.com/" rel="friend" title="Soliloquy">Soliloquy - The Best WordPress Slider</a>
 
 Visit WPBeginner to learn from our [WordPress Tutorials](http://www.wpbeginner.com/category/wp-tutorials/ "WordPress Tutorials") and find out about other [best WordPress plugins](http://www.wpbeginner.com/category/plugins/ "Best WordPress Plugins")
 
