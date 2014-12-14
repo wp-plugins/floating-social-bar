@@ -3,7 +3,7 @@ Contributors: smub, griffinjt
 Donate link: http://www.wpbeginner.com/wpbeginner-needs-your-help/
 Tags: social, social media, floating share bar, share bar, facebook, twitter, google+, pinterest, linkedin, social sharing, tweet, google, google+1, like, share, plus one, socialite, tweet button, twitter button, facebook like, pin it, pinit button, linkedin button, linkedin share, sharing, social media buttons, social media widgets, social widget, wpbeginner, sharethis, sharebar, addthis, social bar
 Requires at least: 3.4.1
-Tested up to: 3.6
+Tested up to: 4.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,7 +47,7 @@ We will do our best to provide support through the WordPress forums. However, pl
 
 = Credits =
 
-This plugin is created by <a href="http://www.balkhis.com" rel="friend" title="Syed Balkhi">Syed Balkhi</a> and <a href="http://thomasgriffinmedia.com/" rel="friend" title="Thomas Griffin">Thomas Griffin</a>.
+This plugin is created by <a href="http://www.balkhis.com" rel="friend" title="Syed Balkhi">Syed Balkhi</a> and <a href="https://thomasgriffin.io" rel="me" title="WordPress Developer - Thomas Griffin">Thomas Griffin</a>.
 
 = What's Next =
 
