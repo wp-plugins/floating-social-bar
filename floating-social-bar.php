@@ -15,7 +15,7 @@
  * Plugin Name:  Floating Social Bar
  * Plugin URI:   http://wpbeginner.com/floating-social-bar/
  * Description:  Floating Social Bar is the best social media plugin for WordPress that adds a floating bar with share buttons to your content without slowing down your site.
- * Version:      1.1.5
+ * Version:      1.1.6
  * Author:       Syed Balkhi and Thomas Griffin
  * Author URI:   http://wpbeginner.com/
  * Text Domain:  fsb

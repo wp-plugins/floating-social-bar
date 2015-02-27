@@ -129,6 +129,9 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 == Changelog ==
 
+= 1.1.6 =
+* Fixed possible security issue with saving order of items in FSB.
+
 = 1.1.5 =
 * Fixed clearfix bug in Firefox.
 

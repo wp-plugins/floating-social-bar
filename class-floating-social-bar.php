@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.1.5';
+    protected $version = '1.1.6';
 
     /**
      * The name of the plugin.
@@ -985,7 +985,7 @@ class floating_social_bar {
     public function save_order() {
 
         // Prepare variables.
-        $items  = stripslashes_deep( $_REQUEST['items'] );
+        $items  = is_array( $_REQUEST['items'] ) ? stripslashes_deep( array_map( 'strip_tags', $_REQUEST['items'] ) ) : stripslashes( strip_tags( $_REQUEST['items'] ) );
         $option = get_option( 'fsb_global_option' );
         $update = array();
 
