@@ -92,7 +92,8 @@
     	    });
 	        data = {
     	        action: 'fsb_save_order',
-    	        items: social_items
+    	        items: social_items,
+    	        nonce: fsb.nonce
 	        };
 	        $.post(fsb.ajax, data, function(res){}, 'json');
 	    }

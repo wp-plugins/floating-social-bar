@@ -3,7 +3,7 @@ Contributors: smub, griffinjt
 Donate link: http://www.wpbeginner.com/wpbeginner-needs-your-help/
 Tags: social, social media, floating share bar, share bar, facebook, twitter, google+, pinterest, linkedin, social sharing, tweet, google, google+1, like, share, plus one, socialite, tweet button, twitter button, facebook like, pin it, pinit button, linkedin button, linkedin share, sharing, social media buttons, social media widgets, social widget, wpbeginner, sharethis, sharebar, addthis, social bar
 Requires at least: 3.4.1
-Tested up to: 4.0.1
+Tested up to: 4.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,10 @@ If you can see the share bar on your site, but it is not floating then 99% of th
 
 
 == Changelog ==
+
+= 1.1.7 =
+* Bug fixes.
+* Fixed potential XSS vulnerability with saving the order of social services.
 
 = 1.1.6 =
 * Fixed possible security issue with saving order of items in FSB.

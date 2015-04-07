@@ -30,6 +30,7 @@
 			// Prepare the data variable.
 			var data = {
 				action: 'fsb_load_stats',
+				nonce:  fsb.nonce,
 				postid: $(this).data('post-id'),
 			},
 				services = {},

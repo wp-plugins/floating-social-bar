@@ -23,7 +23,7 @@ class floating_social_bar {
      *
      * @var string
      */
-    protected $version = '1.1.6';
+    protected $version = '1.1.7';
 
     /**
      * The name of the plugin.
@@ -112,7 +112,6 @@ class floating_social_bar {
 
         // Handle ajax requests.
         add_action( 'wp_ajax_fsb_save_order', array( $this, 'save_order' ) );
-        add_action( 'wp_ajax_nopriv_fsb_save_order', array( $this, 'save_order' ) );
         add_action( 'wp_ajax_fsb_load_stats', array( $this, 'load_stats' ) );
         add_action( 'wp_ajax_nopriv_fsb_load_stats', array( $this, 'load_stats' ) );
 
@@ -445,8 +444,9 @@ class floating_social_bar {
             $this->plugin_slug . '-admin-script',
             'fsb',
             array(
-                'ajax' => admin_url( 'admin-ajax.php' ),
-                'save' => __( 'Saving your settings...', 'fsb' )
+                'ajax'  => admin_url( 'admin-ajax.php' ),
+                'save'  => __( 'Saving your settings...', 'fsb' ),
+                'nonce' => wp_create_nonce( 'fsb-order' )
             )
         );
 
@@ -819,7 +819,8 @@ class floating_social_bar {
         if ( ! $this->is_localized ) {
 	        wp_localize_script( $this->plugin_slug . '-fsb', 'fsb',
 	        	array(
-	        		'ajax' => admin_url( 'admin-ajax.php' )
+	        		'ajax'  => admin_url( 'admin-ajax.php' ),
+	        		'nonce' => wp_create_nonce( 'fsb-output' )
 				)
 			);
 			$this->is_localized = true;
@@ -983,6 +984,9 @@ class floating_social_bar {
      * @since 1.0.0
      */
     public function save_order() {
+	    
+	    // Security check.
+	    check_ajax_referer( 'fsb-order', 'nonce' );
 
         // Prepare variables.
         $items  = is_array( $_REQUEST['items'] ) ? stripslashes_deep( array_map( 'strip_tags', $_REQUEST['items'] ) ) : stripslashes( strip_tags( $_REQUEST['items'] ) );
@@ -1016,6 +1020,9 @@ class floating_social_bar {
      * @since 1.0.0
      */
     public function load_stats() {
+	    
+	    // Run a security check.
+	    check_ajax_referer( 'fsb-output', 'nonce' );
 
 		// Prepare variables.
 		$post_id  = stripslashes( absint( $_POST['postid'] ) );
